@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Calendar,
   MapPin,
@@ -15,7 +15,6 @@ import {
   MoreVertical,
   Eye,
   X,
-  Download,
   Navigation,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
@@ -24,12 +23,11 @@ import { bookingService } from "../../services/booking";
 import Button from "../../components/ui/Button";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import Modal, { ConfirmModal } from "../../components/ui/Modal";
-import Input, { TextArea, Select } from "../../components/ui/Input";
+import { TextArea } from "../../components/ui/Input";
 
 const MyTrips = () => {
   const { currentUser } = useAuth();
   const { addNotification } = useApp();
-  const navigate = useNavigate();
 
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -402,6 +400,14 @@ const MyTrips = () => {
                                       <Eye className="w-4 h-4 mr-3" />
                                       View Car Details
                                     </Link>
+                                    <Link
+                                      to={`/trip/${booking.id}`}
+                                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                      onClick={() => setActiveDropdown(null)}
+                                    >
+                                      <Eye className="w-4 h-4 mr-3" />
+                                      View Trip Details
+                                    </Link>
 
                                     {booking.host && (
                                       <button
@@ -548,6 +554,12 @@ const MyTrips = () => {
                                   Write Review
                                 </Button>
                               )}
+
+                            <Link to={`/trip/${booking.id}`}>
+                              <Button size="sm" variant="outline">
+                                View Details
+                              </Button>
+                            </Link>
                           </div>
                         </div>
                       </div>

@@ -26,7 +26,7 @@ const EditCar = () => {
 
   useEffect(() => {
     fetchCarData();
-  }, [id]);
+  }, [id, navigate, addNotification, currentUser.uid]);
 
   const fetchCarData = async () => {
     try {

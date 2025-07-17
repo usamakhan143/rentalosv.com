@@ -181,6 +181,8 @@ export const bookingService = {
         case "completed":
           updateData.completedAt = serverTimestamp();
           break;
+        default:
+          break;
       }
 
       await updateDoc(docRef, updateData);

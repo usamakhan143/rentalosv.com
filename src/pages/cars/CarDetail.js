@@ -7,18 +7,14 @@ import {
   Share2,
   MapPin,
   Users,
-  Calendar,
   Shield,
   Car as CarIcon,
   Fuel,
   Settings,
-  Clock,
   CheckCircle,
   AlertTriangle,
-  Camera,
   MessageCircle,
   Phone,
-  Mail,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -33,7 +29,8 @@ import { bookingService } from "../../services/booking";
 import Button from "../../components/ui/Button";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import Modal from "../../components/ui/Modal";
-import Input, { TextArea } from "../../components/ui/Input";
+import { TextArea } from "../../components/ui/Input";
+import PaymentCheckout from "../../components/payment/PaymentCheckout";
 
 const CarDetail = () => {
   const { id } = useParams();
@@ -48,6 +45,8 @@ const CarDetail = () => {
   const [bookingLoading, setBookingLoading] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [pendingBooking, setPendingBooking] = useState(null);
   const [favorite, setFavorite] = useState(false);
   const [availabilityChecked, setAvailabilityChecked] = useState(false);
   const [isAvailable, setIsAvailable] = useState(true);
@@ -72,7 +71,7 @@ const CarDetail = () => {
 
   useEffect(() => {
     fetchCarDetails();
-  }, [id]);
+  }, [id, navigate, addNotification]);
 
   useEffect(() => {
     if (car && bookingData.startDate && bookingData.endDate) {
@@ -232,18 +231,23 @@ const CarDetail = () => {
         pickupLocation: car.location,
       });
 
-      addNotification({
-        type: "success",
-        title: car.availability?.instantBook
-          ? "Booking confirmed!"
-          : "Booking request sent!",
-        message: car.availability?.instantBook
-          ? "Your booking has been confirmed. Check your trips for details."
-          : "Your booking request has been sent to the host for approval.",
-      });
+      if (car.availability?.instantBook) {
+        // For instant book, proceed to payment
+        setPendingBooking(newBooking);
+        setShowBookingModal(false);
+        setShowPaymentModal(true);
+      } else {
+        // For regular bookings, just notify
+        addNotification({
+          type: "success",
+          title: "Booking request sent!",
+          message:
+            "Your booking request has been sent to the host for approval.",
+        });
 
-      setShowBookingModal(false);
-      navigate("/my-trips");
+        setShowBookingModal(false);
+        navigate("/my-trips");
+      }
     } catch (error) {
       console.error("Error creating booking:", error);
       addNotification({
@@ -254,6 +258,18 @@ const CarDetail = () => {
     } finally {
       setBookingLoading(false);
     }
+  };
+
+  const handlePaymentSuccess = (paymentIntent) => {
+    addNotification({
+      type: "success",
+      title: "Payment successful!",
+      message: "Your booking has been confirmed and payment processed.",
+    });
+
+    setShowPaymentModal(false);
+    setPendingBooking(null);
+    navigate("/my-trips");
   };
 
   const nextImage = () => {
@@ -898,10 +914,34 @@ const CarDetail = () => {
               loading={bookingLoading}
               disabled={bookingLoading}
             >
-              {car.availability?.instantBook ? "Book Now" : "Send Request"}
+              {car.availability?.instantBook
+                ? "Continue to Payment"
+                : "Send Request"}
             </Button>
           </div>
         </div>
+      </Modal>
+
+      {/* Payment Modal */}
+      <Modal
+        isOpen={showPaymentModal}
+        onClose={() => {
+          setShowPaymentModal(false);
+          setPendingBooking(null);
+        }}
+        title="Complete Your Booking"
+        size="lg"
+      >
+        {pendingBooking && (
+          <PaymentCheckout
+            booking={pendingBooking}
+            onPaymentSuccess={handlePaymentSuccess}
+            onCancel={() => {
+              setShowPaymentModal(false);
+              setPendingBooking(null);
+            }}
+          />
+        )}
       </Modal>
     </div>
   );

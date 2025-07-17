@@ -16,6 +16,7 @@ import Search from "./pages/search/Search";
 import CarDetail from "./pages/cars/CarDetail";
 import Profile from "./pages/user/Profile";
 import MyTrips from "./pages/user/MyTrips";
+import TripDetail from "./pages/trip/TripDetail";
 import MyCars from "./pages/host/MyCars";
 import AddCar from "./pages/host/AddCar";
 import EditCar from "./pages/host/EditCar";
@@ -62,6 +63,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <MyTrips />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/trip/:id"
+                  element={
+                    <ProtectedRoute>
+                      <TripDetail />
                     </ProtectedRoute>
                   }
                 />

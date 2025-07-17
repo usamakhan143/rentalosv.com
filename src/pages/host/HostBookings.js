@@ -14,8 +14,6 @@ import {
   MoreVertical,
   Eye,
   DollarSign,
-  Star,
-  Filter,
   Download,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
@@ -23,8 +21,8 @@ import { useApp } from "../../contexts/AppContext";
 import { bookingService } from "../../services/booking";
 import Button from "../../components/ui/Button";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
-import Modal, { ConfirmModal } from "../../components/ui/Modal";
-import Input, { TextArea, Select } from "../../components/ui/Input";
+import Modal from "../../components/ui/Modal";
+import { TextArea } from "../../components/ui/Input";
 
 const HostBookings = () => {
   const { currentUser } = useAuth();
@@ -77,7 +75,9 @@ const HostBookings = () => {
   ];
 
   useEffect(() => {
-    fetchBookings();
+    if (currentUser) {
+      fetchBookings();
+    }
   }, [currentUser]);
 
   const fetchBookings = async () => {

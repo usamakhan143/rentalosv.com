@@ -9,7 +9,6 @@ import {
   query,
   where,
   orderBy,
-  limit,
   onSnapshot,
   serverTimestamp,
 } from "firebase/firestore";

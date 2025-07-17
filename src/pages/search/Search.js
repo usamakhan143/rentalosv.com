@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
-  Search as SearchIcon,
   Filter,
   MapPin,
-  Calendar,
   Users,
   Star,
   Heart,
   Car,
-  SlidersHorizontal,
   X,
-  ChevronDown,
   Grid,
   List,
 } from "lucide-react";
@@ -24,8 +20,7 @@ import Modal from "../../components/ui/Modal";
 
 const Search = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const { searchFilters, setSearchFilters } = useApp();
+  const { searchFilters } = useApp();
 
   const [cars, setCars] = useState([]);
   const [filteredCars, setFilteredCars] = useState([]);
@@ -86,14 +81,6 @@ const Search = () => {
     { value: "distance", label: "Distance" },
     { value: "newest", label: "Newest" },
   ];
-
-  useEffect(() => {
-    fetchCars();
-  }, []);
-
-  useEffect(() => {
-    applyFiltersAndSort();
-  }, [cars, filters, sortBy]);
 
   const fetchCars = async () => {
     try {
@@ -226,6 +213,14 @@ const Search = () => {
 
     setFilteredCars(filtered);
   };
+
+  useEffect(() => {
+    fetchCars();
+  }, []);
+
+  useEffect(() => {
+    applyFiltersAndSort();
+  }, [cars, filters, sortBy]);
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({

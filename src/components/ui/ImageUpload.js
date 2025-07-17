@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Upload, X, Camera, AlertCircle } from "lucide-react";
-import { imageUploadService, imageUtils } from "../../services/storage";
+import { imageUtils } from "../../services/storage";
 import LoadingSpinner from "./LoadingSpinner";
 
 const ImageUpload = ({
@@ -176,7 +176,7 @@ const ImageUpload = ({
                 {/* Image */}
                 <img
                   src={image.preview || image.url}
-                  alt={`Car photo ${index + 1}`}
+                  alt={`${index + 1}`}
                   className="w-full h-full object-cover"
                 />
 

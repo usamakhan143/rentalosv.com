@@ -8,7 +8,6 @@ import {
   Eye,
   MoreVertical,
   Calendar,
-  DollarSign,
   Star,
   MapPin,
   Settings,
@@ -18,7 +17,7 @@ import { useApp } from "../../contexts/AppContext";
 import { carService } from "../../services/firestore";
 import Button from "../../components/ui/Button";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
-import Modal, { ConfirmModal } from "../../components/ui/Modal";
+import { ConfirmModal } from "../../components/ui/Modal";
 
 const MyCars = () => {
   const { currentUser } = useAuth();
@@ -33,7 +32,9 @@ const MyCars = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   useEffect(() => {
-    fetchMyCars();
+    if (currentUser) {
+      fetchMyCars();
+    }
   }, [currentUser]);
 
   const fetchMyCars = async () => {

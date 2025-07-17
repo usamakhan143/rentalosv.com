@@ -1,13 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  MapPin,
-  Calendar,
-  DollarSign,
-  Shield,
-  Info,
-} from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, DollarSign, Shield } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useApp } from "../../contexts/AppContext";
 import { carService } from "../../services/firestore";
@@ -280,7 +273,7 @@ const AddCar = () => {
         reviews: [],
       };
 
-      const newCar = await carService.createCar(carData);
+      await carService.createCar(carData);
 
       addNotification({
         type: "success",

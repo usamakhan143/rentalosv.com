@@ -25,6 +25,7 @@ import AdminPanel from "./pages/admin/AdminPanel";
 import Settings from "./pages/user/Settings";
 import BecomeHost from "./pages/BecomeHost";
 import HowItWorks from "./pages/HowItWorks";
+import AdminSetup from "./pages/AdminSetup";
 import NotFound from "./pages/NotFound";
 import Unauthorized from "./pages/Unauthorized";
 
@@ -48,6 +49,7 @@ function App() {
                 <Route path="/cars/:id" element={<CarDetail />} />
                 <Route path="/become-host" element={<BecomeHost />} />
                 <Route path="/how-it-works" element={<HowItWorks />} />
+                <Route path="/admin-setup" element={<AdminSetup />} />
 
                 {/* Protected Routes - Require Authentication */}
                 <Route

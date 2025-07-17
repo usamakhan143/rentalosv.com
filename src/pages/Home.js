@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   Search,
   MapPin,
@@ -252,6 +252,34 @@ const Home = () => {
                 </div>
               </div>
             </form>
+          </div>
+        </div>
+      </section>
+
+      {/* Admin Setup Banner - For Testing */}
+      <section className="py-4 bg-blue-50 border-y border-blue-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center text-center">
+            <div className="flex items-center space-x-3 text-blue-700">
+              <Shield className="h-5 w-5" />
+              <span className="text-sm">
+                Testing admin features?
+                <Link
+                  to="/admin-setup"
+                  className="ml-2 font-medium underline hover:text-blue-900"
+                >
+                  Create Admin User
+                </Link>
+                {" or "}
+                <Link
+                  to="/login"
+                  className="font-medium underline hover:text-blue-900"
+                >
+                  Login
+                </Link>
+                {" with admin@carshare.com"}
+              </span>
+            </div>
           </div>
         </div>
       </section>

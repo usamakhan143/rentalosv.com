@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Calendar,
   MapPin,
@@ -8,15 +8,15 @@ import {
   User,
   Phone,
   MessageCircle,
-  Star,
   CheckCircle,
   XCircle,
   AlertCircle,
   MoreVertical,
   Eye,
-  X,
+  DollarSign,
+  Star,
+  Filter,
   Download,
-  Navigation,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useApp } from "../../contexts/AppContext";
@@ -26,36 +26,41 @@ import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import Modal, { ConfirmModal } from "../../components/ui/Modal";
 import Input, { TextArea, Select } from "../../components/ui/Input";
 
-const MyTrips = () => {
+const HostBookings = () => {
   const { currentUser } = useAuth();
   const { addNotification } = useApp();
-  const navigate = useNavigate();
 
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(null);
   const [activeTab, setActiveTab] = useState("all");
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [cancelModal, setCancelModal] = useState({
+  const [responseModal, setResponseModal] = useState({
     isOpen: false,
     booking: null,
+    action: null,
   });
-  const [reviewModal, setReviewModal] = useState({
-    isOpen: false,
-    booking: null,
-  });
-  const [reviewData, setReviewData] = useState({
-    rating: 5,
-    comment: "",
-    wouldRecommend: true,
+  const [responseMessage, setResponseMessage] = useState("");
+  const [stats, setStats] = useState({
+    total: 0,
+    pending: 0,
+    approved: 0,
+    active: 0,
+    completed: 0,
+    revenue: 0,
   });
 
   const tabs = [
-    { id: "all", label: "All Trips", count: bookings.length },
+    { id: "all", label: "All Bookings", count: bookings.length },
+    {
+      id: "pending",
+      label: "Pending",
+      count: bookings.filter((b) => b.status === "pending").length,
+    },
     {
       id: "upcoming",
       label: "Upcoming",
-      count: bookings.filter((b) => ["pending", "approved"].includes(b.status))
-        .length,
+      count: bookings.filter((b) => b.status === "approved").length,
     },
     {
       id: "active",
@@ -80,16 +85,22 @@ const MyTrips = () => {
       setLoading(true);
       if (!currentUser) return;
 
-      const userBookings = await bookingService.getBookingsByRenter(
+      const hostBookings = await bookingService.getBookingsByHost(
         currentUser.uid,
       );
-      setBookings(userBookings);
+      setBookings(hostBookings);
+
+      // Calculate stats
+      const bookingStats = await bookingService.getHostBookingStats(
+        currentUser.uid,
+      );
+      setStats(bookingStats);
     } catch (error) {
       console.error("Error fetching bookings:", error);
       addNotification({
         type: "error",
-        title: "Error loading trips",
-        message: "Failed to load your trips. Please try again.",
+        title: "Error loading bookings",
+        message: "Failed to load your bookings. Please try again.",
       });
     } finally {
       setLoading(false);
@@ -98,10 +109,10 @@ const MyTrips = () => {
 
   const getFilteredBookings = () => {
     switch (activeTab) {
+      case "pending":
+        return bookings.filter((b) => b.status === "pending");
       case "upcoming":
-        return bookings.filter((b) =>
-          ["pending", "approved"].includes(b.status),
-        );
+        return bookings.filter((b) => b.status === "approved");
       case "active":
         return bookings.filter((b) => b.status === "in_progress");
       case "past":
@@ -119,7 +130,7 @@ const MyTrips = () => {
         return {
           color: "bg-yellow-100 text-yellow-800",
           icon: Clock,
-          text: "Pending Approval",
+          text: "Awaiting Response",
         };
       case "approved":
         return {
@@ -136,14 +147,14 @@ const MyTrips = () => {
       case "cancelled":
         return {
           color: "bg-gray-100 text-gray-800",
-          icon: X,
+          icon: XCircle,
           text: "Cancelled",
         };
       case "in_progress":
         return {
           color: "bg-blue-100 text-blue-800",
-          icon: Navigation,
-          text: "In Progress",
+          icon: Car,
+          text: "Trip in Progress",
         };
       case "completed":
         return {
@@ -160,88 +171,64 @@ const MyTrips = () => {
     }
   };
 
-  const handleCancelBooking = async () => {
+  const handleBookingResponse = async () => {
+    if (!responseModal.booking || !responseModal.action) return;
+
+    setActionLoading(responseModal.booking.id);
+
     try {
-      await bookingService.cancelBooking(
-        cancelModal.booking.id,
-        "Cancelled by renter",
-        "renter",
-      );
+      if (responseModal.action === "approve") {
+        await bookingService.approveBooking(
+          responseModal.booking.id,
+          responseMessage,
+        );
 
-      setBookings(
-        bookings.map((b) =>
-          b.id === cancelModal.booking.id ? { ...b, status: "cancelled" } : b,
-        ),
-      );
+        setBookings(
+          bookings.map((b) =>
+            b.id === responseModal.booking.id
+              ? { ...b, status: "approved", hostMessage: responseMessage }
+              : b,
+          ),
+        );
 
-      addNotification({
-        type: "success",
-        title: "Booking cancelled",
-        message: "Your booking has been successfully cancelled.",
-      });
+        addNotification({
+          type: "success",
+          title: "Booking approved",
+          message: "The booking request has been approved.",
+        });
+      } else if (responseModal.action === "decline") {
+        await bookingService.declineBooking(
+          responseModal.booking.id,
+          responseMessage,
+        );
 
-      setCancelModal({ isOpen: false, booking: null });
+        setBookings(
+          bookings.map((b) =>
+            b.id === responseModal.booking.id
+              ? { ...b, status: "declined", declineReason: responseMessage }
+              : b,
+          ),
+        );
+
+        addNotification({
+          type: "success",
+          title: "Booking declined",
+          message: "The booking request has been declined.",
+        });
+      }
+
+      setResponseModal({ isOpen: false, booking: null, action: null });
+      setResponseMessage("");
     } catch (error) {
-      console.error("Error cancelling booking:", error);
+      console.error("Error responding to booking:", error);
       addNotification({
         type: "error",
-        title: "Cancellation failed",
-        message: "Failed to cancel booking. Please try again.",
+        title: "Action failed",
+        message: "Failed to respond to booking. Please try again.",
       });
+    } finally {
+      setActionLoading(null);
     }
-  };
-
-  const handleSubmitReview = async () => {
-    try {
-      const booking = reviewModal.booking;
-
-      await bookingService.submitReview(
-        booking.id,
-        {
-          carId: booking.carId,
-          userId: currentUser.uid,
-          rating: reviewData.rating,
-          comment: reviewData.comment,
-          wouldRecommend: reviewData.wouldRecommend,
-          userName: currentUser.displayName || "Anonymous",
-        },
-        "renter",
-      );
-
-      setBookings(
-        bookings.map((b) =>
-          b.id === booking.id ? { ...b, reviewSubmitted: true } : b,
-        ),
-      );
-
-      addNotification({
-        type: "success",
-        title: "Review submitted",
-        message: "Thank you for your feedback!",
-      });
-
-      setReviewModal({ isOpen: false, booking: null });
-      setReviewData({ rating: 5, comment: "", wouldRecommend: true });
-    } catch (error) {
-      console.error("Error submitting review:", error);
-      addNotification({
-        type: "error",
-        title: "Review failed",
-        message: "Failed to submit review. Please try again.",
-      });
-    }
-  };
-
-  const canCancelBooking = (booking) => {
-    const now = new Date();
-    const tripStart = new Date(
-      booking.startDate.toDate ? booking.startDate.toDate() : booking.startDate,
-    );
-    const hoursUntilTrip = (tripStart - now) / (1000 * 60 * 60);
-
-    return (
-      ["pending", "approved"].includes(booking.status) && hoursUntilTrip > 24
-    );
   };
 
   const formatDate = (date) => {
@@ -263,13 +250,19 @@ const MyTrips = () => {
     });
   };
 
+  const calculateHostEarnings = (pricing) => {
+    if (!pricing) return 0;
+    // Host gets 85% of subtotal (after service fee and protection fee)
+    return (pricing.subtotal * 0.85).toFixed(2);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <LoadingSpinner size="xl" className="text-primary-600 mb-4" />
           <h2 className="text-xl font-semibold text-gray-900">
-            Loading your trips...
+            Loading bookings...
           </h2>
         </div>
       </div>
@@ -281,10 +274,65 @@ const MyTrips = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">My Trips</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Booking Requests</h1>
           <p className="text-gray-600 mt-2">
-            Manage your bookings and view trip history
+            Manage incoming booking requests and track your trips
           </p>
+        </div>
+
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="flex items-center">
+              <Clock className="w-8 h-8 text-yellow-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Pending</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.pending}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="flex items-center">
+              <CheckCircle className="w-8 h-8 text-green-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Approved</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.approved}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="flex items-center">
+              <Car className="w-8 h-8 text-blue-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">
+                  Active Trips
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.active}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="flex items-center">
+              <DollarSign className="w-8 h-8 text-green-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">
+                  Total Revenue
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  ${stats.totalRevenue?.toFixed(2) || "0.00"}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Tabs */}
@@ -317,21 +365,23 @@ const MyTrips = () => {
           </nav>
         </div>
 
-        {/* Trips List */}
+        {/* Bookings List */}
         {getFilteredBookings().length === 0 ? (
           <div className="text-center py-12">
             <Car className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              {activeTab === "all" ? "No trips yet" : `No ${activeTab} trips`}
+              {activeTab === "all"
+                ? "No bookings yet"
+                : `No ${activeTab} bookings`}
             </h2>
             <p className="text-gray-600 mb-6">
               {activeTab === "all"
-                ? "Book your first car to start your journey"
-                : `You don't have any ${activeTab} trips`}
+                ? "Bookings will appear here when renters request your cars"
+                : `You don't have any ${activeTab} bookings`}
             </p>
             {activeTab === "all" && (
-              <Link to="/search">
-                <Button>Find Cars</Button>
+              <Link to="/my-cars">
+                <Button>Manage My Cars</Button>
               </Link>
             )}
           </div>
@@ -340,6 +390,7 @@ const MyTrips = () => {
             {getFilteredBookings().map((booking) => {
               const statusConfig = getStatusConfig(booking.status);
               const StatusIcon = statusConfig.icon;
+              const hostEarnings = calculateHostEarnings(booking.pricing);
 
               return (
                 <div
@@ -353,7 +404,7 @@ const MyTrips = () => {
                         <div className="w-24 h-24 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                           <img
                             src={
-                              booking.carDetails?.image ||
+                              booking.car?.images?.[0] ||
                               "https://images.unsplash.com/photo-1502877338535-766e1452684a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
                             }
                             alt={`${booking.carDetails?.make} ${booking.carDetails?.model}`}
@@ -361,7 +412,7 @@ const MyTrips = () => {
                           />
                         </div>
 
-                        {/* Trip Details */}
+                        {/* Booking Details */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-2">
                             <h3 className="text-lg font-semibold text-gray-900 truncate">
@@ -403,55 +454,28 @@ const MyTrips = () => {
                                       View Car Details
                                     </Link>
 
-                                    {booking.host && (
-                                      <button
-                                        onClick={() => setActiveDropdown(null)}
-                                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                                      >
-                                        <MessageCircle className="w-4 h-4 mr-3" />
-                                        Message Host
-                                      </button>
-                                    )}
+                                    <button
+                                      onClick={() => setActiveDropdown(null)}
+                                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                    >
+                                      <MessageCircle className="w-4 h-4 mr-3" />
+                                      Message Renter
+                                    </button>
 
-                                    {canCancelBooking(booking) && (
-                                      <button
-                                        onClick={() => {
-                                          setCancelModal({
-                                            isOpen: true,
-                                            booking,
-                                          });
-                                          setActiveDropdown(null);
-                                        }}
-                                        className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                                      >
-                                        <X className="w-4 h-4 mr-3" />
-                                        Cancel Trip
-                                      </button>
-                                    )}
-
-                                    {booking.status === "completed" &&
-                                      !booking.reviewSubmitted && (
-                                        <button
-                                          onClick={() => {
-                                            setReviewModal({
-                                              isOpen: true,
-                                              booking,
-                                            });
-                                            setActiveDropdown(null);
-                                          }}
-                                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                                        >
-                                          <Star className="w-4 h-4 mr-3" />
-                                          Write Review
-                                        </button>
-                                      )}
+                                    <button
+                                      onClick={() => setActiveDropdown(null)}
+                                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                    >
+                                      <Download className="w-4 h-4 mr-3" />
+                                      Download Receipt
+                                    </button>
                                   </div>
                                 )}
                               </div>
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 mb-4">
                             <div className="flex items-center">
                               <Calendar className="w-4 h-4 mr-2" />
                               <div>
@@ -467,21 +491,33 @@ const MyTrips = () => {
                             </div>
 
                             <div className="flex items-center">
+                              <User className="w-4 h-4 mr-2" />
+                              <span>Renter: {booking.renterDetails?.name}</span>
+                            </div>
+
+                            <div className="flex items-center">
                               <MapPin className="w-4 h-4 mr-2" />
                               <span>
                                 {booking.pickupLocation?.city},{" "}
                                 {booking.pickupLocation?.state}
                               </span>
                             </div>
-
-                            <div className="flex items-center">
-                              <User className="w-4 h-4 mr-2" />
-                              <span>Host: {booking.hostDetails?.name}</span>
-                            </div>
                           </div>
 
+                          {/* Renter Message */}
+                          {booking.renterMessage && (
+                            <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                              <h4 className="text-sm font-medium text-gray-900 mb-1">
+                                Message from renter:
+                              </h4>
+                              <p className="text-sm text-gray-700">
+                                {booking.renterMessage}
+                              </p>
+                            </div>
+                          )}
+
                           {/* Pricing */}
-                          <div className="mt-4 pt-4 border-t border-gray-100">
+                          <div className="pt-4 border-t border-gray-100">
                             <div className="flex justify-between items-center">
                               <div className="text-sm text-gray-600">
                                 {booking.pricing?.days} days • $
@@ -489,10 +525,10 @@ const MyTrips = () => {
                               </div>
                               <div className="text-right">
                                 <div className="text-lg font-semibold text-gray-900">
-                                  ${booking.pricing?.total?.toFixed(2)}
+                                  ${hostEarnings}
                                 </div>
                                 <div className="text-sm text-gray-500">
-                                  Total
+                                  Your earnings
                                 </div>
                               </div>
                             </div>
@@ -501,22 +537,54 @@ const MyTrips = () => {
                           {/* Action Buttons */}
                           <div className="mt-4 flex space-x-3">
                             {booking.status === "pending" && (
-                              <div className="text-sm text-gray-600">
-                                Waiting for host approval...
+                              <div className="flex space-x-3">
+                                <Button
+                                  size="sm"
+                                  onClick={() =>
+                                    setResponseModal({
+                                      isOpen: true,
+                                      booking,
+                                      action: "approve",
+                                    })
+                                  }
+                                  loading={actionLoading === booking.id}
+                                  disabled={actionLoading === booking.id}
+                                >
+                                  Approve
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() =>
+                                    setResponseModal({
+                                      isOpen: true,
+                                      booking,
+                                      action: "decline",
+                                    })
+                                  }
+                                  loading={actionLoading === booking.id}
+                                  disabled={actionLoading === booking.id}
+                                >
+                                  Decline
+                                </Button>
                               </div>
                             )}
 
                             {booking.status === "approved" && (
                               <div className="flex space-x-3">
-                                <Button size="sm" variant="outline">
-                                  View Directions
-                                </Button>
                                 <Button
                                   size="sm"
                                   variant="outline"
                                   icon={<Phone className="w-4 h-4" />}
                                 >
-                                  Call Host
+                                  Call Renter
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  icon={<MessageCircle className="w-4 h-4" />}
+                                >
+                                  Message
                                 </Button>
                               </div>
                             )}
@@ -524,7 +592,7 @@ const MyTrips = () => {
                             {booking.status === "in_progress" && (
                               <div className="flex space-x-3">
                                 <Button size="sm" variant="outline">
-                                  End Trip
+                                  Check Trip Status
                                 </Button>
                                 <Button
                                   size="sm"
@@ -535,19 +603,6 @@ const MyTrips = () => {
                                 </Button>
                               </div>
                             )}
-
-                            {booking.status === "completed" &&
-                              !booking.reviewSubmitted && (
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() =>
-                                    setReviewModal({ isOpen: true, booking })
-                                  }
-                                >
-                                  Write Review
-                                </Button>
-                              )}
                           </div>
                         </div>
                       </div>
@@ -567,121 +622,108 @@ const MyTrips = () => {
           />
         )}
 
-        {/* Cancel Booking Modal */}
-        <ConfirmModal
-          isOpen={cancelModal.isOpen}
-          onClose={() => setCancelModal({ isOpen: false, booking: null })}
-          onConfirm={handleCancelBooking}
-          title="Cancel Booking"
-          message="Are you sure you want to cancel this booking? This action cannot be undone and cancellation fees may apply."
-          confirmText="Cancel Booking"
-          cancelText="Keep Booking"
-          type="danger"
-        />
-
-        {/* Review Modal */}
+        {/* Response Modal */}
         <Modal
-          isOpen={reviewModal.isOpen}
-          onClose={() => setReviewModal({ isOpen: false, booking: null })}
-          title="Write a Review"
+          isOpen={responseModal.isOpen}
+          onClose={() => {
+            setResponseModal({ isOpen: false, booking: null, action: null });
+            setResponseMessage("");
+          }}
+          title={
+            responseModal.action === "approve"
+              ? "Approve Booking"
+              : "Decline Booking"
+          }
           size="md"
         >
-          {reviewModal.booking && (
+          {responseModal.booking && (
             <div className="space-y-6">
               <div className="flex items-center space-x-4">
                 <img
                   src={
-                    reviewModal.booking.carDetails?.image ||
+                    responseModal.booking.car?.images?.[0] ||
                     "https://images.unsplash.com/photo-1502877338535-766e1452684a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
                   }
-                  alt={`${reviewModal.booking.carDetails?.make} ${reviewModal.booking.carDetails?.model}`}
+                  alt={`${responseModal.booking.carDetails?.make} ${responseModal.booking.carDetails?.model}`}
                   className="w-16 h-16 rounded-lg object-cover"
                 />
                 <div>
                   <h3 className="font-semibold">
-                    {reviewModal.booking.carDetails?.year}{" "}
-                    {reviewModal.booking.carDetails?.make}{" "}
-                    {reviewModal.booking.carDetails?.model}
+                    {responseModal.booking.carDetails?.year}{" "}
+                    {responseModal.booking.carDetails?.make}{" "}
+                    {responseModal.booking.carDetails?.model}
                   </h3>
                   <p className="text-gray-500">
-                    {formatDate(reviewModal.booking.startDate)} -{" "}
-                    {formatDate(reviewModal.booking.endDate)}
+                    Requested by {responseModal.booking.renterDetails?.name}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {formatDate(responseModal.booking.startDate)} -{" "}
+                    {formatDate(responseModal.booking.endDate)}
                   </p>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Rating
-                </label>
-                <div className="flex space-x-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      onClick={() =>
-                        setReviewData({ ...reviewData, rating: star })
-                      }
-                      className="focus:outline-none"
-                    >
-                      <Star
-                        className={`w-8 h-8 ${
-                          star <= reviewData.rating
-                            ? "text-yellow-400 fill-current"
-                            : "text-gray-300"
-                        }`}
-                      />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               <TextArea
-                label="Your Review"
-                placeholder="Share your experience with this car..."
-                value={reviewData.comment}
-                onChange={(e) =>
-                  setReviewData({ ...reviewData, comment: e.target.value })
+                label={
+                  responseModal.action === "approve"
+                    ? "Message to renter (optional)"
+                    : "Reason for declining (optional)"
                 }
+                placeholder={
+                  responseModal.action === "approve"
+                    ? "Welcome! Here are some details about the pickup..."
+                    : "I apologize, but I need to decline this request because..."
+                }
+                value={responseMessage}
+                onChange={(e) => setResponseMessage(e.target.value)}
                 rows={4}
               />
 
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="wouldRecommend"
-                  checked={reviewData.wouldRecommend}
-                  onChange={(e) =>
-                    setReviewData({
-                      ...reviewData,
-                      wouldRecommend: e.target.checked,
-                    })
-                  }
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                />
-                <label
-                  htmlFor="wouldRecommend"
-                  className="ml-2 text-sm text-gray-700"
-                >
-                  I would recommend this car to others
-                </label>
-              </div>
+              {responseModal.action === "approve" && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-center mb-2">
+                    <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
+                    <h4 className="font-medium text-green-900">
+                      Booking Details
+                    </h4>
+                  </div>
+                  <div className="text-sm text-green-800">
+                    <p>
+                      Your earnings: $
+                      {calculateHostEarnings(responseModal.booking.pricing)}
+                    </p>
+                    <p>
+                      Trip duration: {responseModal.booking.pricing?.days} days
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <div className="flex space-x-3">
                 <Button
                   variant="secondary"
                   className="flex-1"
-                  onClick={() =>
-                    setReviewModal({ isOpen: false, booking: null })
-                  }
+                  onClick={() => {
+                    setResponseModal({
+                      isOpen: false,
+                      booking: null,
+                      action: null,
+                    });
+                    setResponseMessage("");
+                  }}
                 >
                   Cancel
                 </Button>
                 <Button
                   className="flex-1"
-                  onClick={handleSubmitReview}
-                  disabled={!reviewData.comment.trim()}
+                  onClick={handleBookingResponse}
+                  variant={
+                    responseModal.action === "decline" ? "danger" : "primary"
+                  }
                 >
-                  Submit Review
+                  {responseModal.action === "approve"
+                    ? "Approve Booking"
+                    : "Decline Booking"}
                 </Button>
               </div>
             </div>
@@ -692,4 +734,4 @@ const MyTrips = () => {
   );
 };
 
-export default MyTrips;
+export default HostBookings;

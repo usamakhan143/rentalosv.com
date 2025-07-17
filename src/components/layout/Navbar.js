@@ -10,6 +10,7 @@ import {
   LogOut,
   Shield,
   Home,
+  Clock,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -41,7 +42,10 @@ const Navbar = () => {
     { to: "/profile", label: "Profile", icon: User },
     { to: "/my-trips", label: "My trips", icon: Calendar },
     ...(userProfile?.role === "host" || userProfile?.role === "admin"
-      ? [{ to: "/my-cars", label: "My cars", icon: Car }]
+      ? [
+          { to: "/my-cars", label: "My cars", icon: Car },
+          { to: "/host-bookings", label: "Bookings", icon: Clock },
+        ]
       : []),
     ...(userProfile?.role === "admin"
       ? [{ to: "/admin", label: "Admin Panel", icon: Shield }]

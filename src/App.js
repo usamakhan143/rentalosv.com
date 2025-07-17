@@ -19,6 +19,7 @@ import MyTrips from "./pages/user/MyTrips";
 import MyCars from "./pages/host/MyCars";
 import AddCar from "./pages/host/AddCar";
 import EditCar from "./pages/host/EditCar";
+import HostBookings from "./pages/host/HostBookings";
 import AdminPanel from "./pages/admin/AdminPanel";
 import Settings from "./pages/user/Settings";
 import BecomeHost from "./pages/BecomeHost";
@@ -95,6 +96,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <EditCar />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/host-bookings"
+                  element={
+                    <ProtectedRoute>
+                      <HostBookings />
                     </ProtectedRoute>
                   }
                 />

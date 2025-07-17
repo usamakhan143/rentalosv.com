@@ -29,10 +29,11 @@ import {
   userService,
   reviewService,
 } from "../../services/firestore";
+import { bookingService } from "../../services/booking";
 import Button from "../../components/ui/Button";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import Modal from "../../components/ui/Modal";
-import Input from "../../components/ui/Input";
+import Input, { TextArea } from "../../components/ui/Input";
 
 const CarDetail = () => {
   const { id } = useParams();
@@ -44,9 +45,12 @@ const CarDetail = () => {
   const [host, setHost] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [bookingLoading, setBookingLoading] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [favorite, setFavorite] = useState(false);
+  const [availabilityChecked, setAvailabilityChecked] = useState(false);
+  const [isAvailable, setIsAvailable] = useState(true);
 
   const [bookingData, setBookingData] = useState({
     startDate: "",
@@ -71,8 +75,11 @@ const CarDetail = () => {
   }, [id]);
 
   useEffect(() => {
-    calculatePricing();
-  }, [bookingData, car]);
+    if (car && bookingData.startDate && bookingData.endDate) {
+      calculatePricing();
+      checkAvailability();
+    }
+  }, [bookingData.startDate, bookingData.endDate, car]);
 
   const fetchCarDetails = async () => {
     try {
@@ -124,43 +131,34 @@ const CarDetail = () => {
       return;
     }
 
-    const start = new Date(bookingData.startDate);
-    const end = new Date(bookingData.endDate);
-    const diffTime = Math.abs(end - start);
-    const diffDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+    const calculatedPricing = bookingService.calculatePricing(
+      car,
+      bookingData.startDate,
+      bookingData.endDate,
+    );
 
-    const dailyRate = car.pricing?.dailyRate || 0;
-    let subtotal = dailyRate * diffDays;
+    setPricing(calculatedPricing);
+  };
 
-    // Apply discounts for longer trips
-    if (diffDays >= 30 && car.pricing?.monthlyDiscount) {
-      subtotal = subtotal * (1 - car.pricing.monthlyDiscount / 100);
-    } else if (diffDays >= 7 && car.pricing?.weeklyDiscount) {
-      subtotal = subtotal * (1 - car.pricing.weeklyDiscount / 100);
+  const checkAvailability = async () => {
+    if (!car || !bookingData.startDate || !bookingData.endDate) {
+      setAvailabilityChecked(false);
+      return;
     }
 
-    const serviceFeeRate = 0.1; // 10% service fee
-    const serviceFee = subtotal * serviceFeeRate;
-
-    const protectionFeeRate =
-      car.protectionPlan === "premium"
-        ? 0.25
-        : car.protectionPlan === "standard"
-          ? 0.15
-          : 0.1;
-    const protectionFee = subtotal * protectionFeeRate;
-
-    const total = subtotal + serviceFee + protectionFee;
-
-    setPricing({
-      days: diffDays,
-      dailyRate,
-      totalDays: diffDays,
-      subtotal,
-      serviceFee,
-      protectionFee,
-      total,
-    });
+    try {
+      const available = await bookingService.checkAvailability(
+        car.id,
+        bookingData.startDate,
+        bookingData.endDate,
+      );
+      setIsAvailable(available);
+      setAvailabilityChecked(true);
+    } catch (error) {
+      console.error("Error checking availability:", error);
+      setIsAvailable(false);
+      setAvailabilityChecked(true);
+    }
   };
 
   const handleBooking = async () => {
@@ -183,15 +181,79 @@ const CarDetail = () => {
       return;
     }
 
-    // Here you would integrate with booking service and payment processing
-    addNotification({
-      type: "success",
-      title: "Booking request sent!",
-      message: "Your booking request has been sent to the host for approval.",
-    });
+    if (!isAvailable) {
+      addNotification({
+        type: "error",
+        title: "Car not available",
+        message: "This car is not available for your selected dates.",
+      });
+      return;
+    }
 
-    setShowBookingModal(false);
-    navigate("/my-trips");
+    // Check if user is trying to book their own car
+    if (currentUser.uid === car.ownerId) {
+      addNotification({
+        type: "error",
+        title: "Cannot book own car",
+        message: "You cannot book your own car.",
+      });
+      return;
+    }
+
+    setBookingLoading(true);
+
+    try {
+      // Create the booking
+      const newBooking = await bookingService.createBooking({
+        carId: car.id,
+        renterId: currentUser.uid,
+        hostId: car.ownerId,
+        startDate: new Date(
+          bookingData.startDate + "T" + bookingData.startTime,
+        ),
+        endDate: new Date(bookingData.endDate + "T" + bookingData.endTime),
+        pricing: pricing,
+        renterMessage: bookingData.message,
+        carDetails: {
+          make: car.specs?.make,
+          model: car.specs?.model,
+          year: car.specs?.year,
+          licensePlate: car.specs?.licensePlate,
+          image: car.images?.[0],
+        },
+        renterDetails: {
+          name: `${currentUser.displayName || "User"}`,
+          email: currentUser.email,
+        },
+        hostDetails: {
+          name: `${host?.firstName} ${host?.lastName}`,
+          email: host?.email,
+        },
+        pickupLocation: car.location,
+      });
+
+      addNotification({
+        type: "success",
+        title: car.availability?.instantBook
+          ? "Booking confirmed!"
+          : "Booking request sent!",
+        message: car.availability?.instantBook
+          ? "Your booking has been confirmed. Check your trips for details."
+          : "Your booking request has been sent to the host for approval.",
+      });
+
+      setShowBookingModal(false);
+      navigate("/my-trips");
+    } catch (error) {
+      console.error("Error creating booking:", error);
+      addNotification({
+        type: "error",
+        title: "Booking failed",
+        message: error.message || "Failed to create booking. Please try again.",
+      });
+    } finally {
+      setBookingLoading(false);
+    }
   };
 
   const nextImage = () => {
@@ -648,6 +710,35 @@ const CarDetail = () => {
                 </div>
               </div>
 
+              {/* Availability Status */}
+              {availabilityChecked &&
+                bookingData.startDate &&
+                bookingData.endDate && (
+                  <div
+                    className={`mb-4 p-3 rounded-lg flex items-center ${
+                      isAvailable
+                        ? "bg-green-50 text-green-800"
+                        : "bg-red-50 text-red-800"
+                    }`}
+                  >
+                    {isAvailable ? (
+                      <>
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        <span className="text-sm font-medium">
+                          Available for selected dates
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <AlertTriangle className="w-4 h-4 mr-2" />
+                        <span className="text-sm font-medium">
+                          Not available for selected dates
+                        </span>
+                      </>
+                    )}
+                  </div>
+                )}
+
               {/* Pricing Breakdown */}
               {pricing.days > 0 && (
                 <div className="border-t border-gray-200 pt-4 mb-6">
@@ -677,11 +768,18 @@ const CarDetail = () => {
               <Button
                 className="w-full"
                 onClick={() => setShowBookingModal(true)}
-                disabled={!bookingData.startDate || !bookingData.endDate}
+                disabled={
+                  !bookingData.startDate ||
+                  !bookingData.endDate ||
+                  !isAvailable ||
+                  currentUser?.uid === car.ownerId
+                }
               >
-                {car.availability?.instantBook
-                  ? "Book Instantly"
-                  : "Request to Book"}
+                {currentUser?.uid === car.ownerId
+                  ? "Cannot book own car"
+                  : car.availability?.instantBook
+                    ? "Book Instantly"
+                    : "Request to Book"}
               </Button>
 
               <div className="text-center mt-4">
@@ -775,13 +873,14 @@ const CarDetail = () => {
             </div>
           </div>
 
-          <Input
+          <TextArea
             label="Message to host (optional)"
             placeholder="Tell the host about your trip..."
             value={bookingData.message}
             onChange={(e) =>
               setBookingData({ ...bookingData, message: e.target.value })
             }
+            rows={3}
           />
 
           <div className="flex space-x-3">
@@ -789,10 +888,16 @@ const CarDetail = () => {
               variant="secondary"
               className="flex-1"
               onClick={() => setShowBookingModal(false)}
+              disabled={bookingLoading}
             >
               Cancel
             </Button>
-            <Button className="flex-1" onClick={handleBooking}>
+            <Button
+              className="flex-1"
+              onClick={handleBooking}
+              loading={bookingLoading}
+              disabled={bookingLoading}
+            >
               {car.availability?.instantBook ? "Book Now" : "Send Request"}
             </Button>
           </div>

@@ -1,15 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import {
-  Search,
-  MapPin,
-  Calendar,
-  Users,
-  Star,
-  Shield,
-  Clock,
-  Smartphone,
-} from "lucide-react";
+import { Search, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useApp } from "../contexts/AppContext";
 
 const Home = () => {
@@ -17,22 +8,17 @@ const Home = () => {
   const { setSearchFilters } = useApp();
   const [searchData, setSearchData] = useState({
     location: "",
-    pickupDate: "",
-    dropoffDate: "",
+    pickupDate: "19/07/2025",
+    dropoffDate: "22/07/2025",
     pickupTime: "10:00",
     dropoffTime: "10:00",
   });
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (
-      !searchData.location ||
-      !searchData.pickupDate ||
-      !searchData.dropoffDate
-    ) {
+    if (!searchData.location) {
       return;
     }
-
     setSearchFilters({
       location: searchData.location,
       pickupDate: new Date(searchData.pickupDate + "T" + searchData.pickupTime),
@@ -40,426 +26,591 @@ const Home = () => {
         searchData.dropoffDate + "T" + searchData.dropoffTime,
       ),
     });
-
     navigate("/search");
   };
 
-  const featuredCars = [
+  const handleChange = (e) => {
+    setSearchData({
+      ...searchData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const rentCarsData = [
     {
-      id: 1,
-      make: "Tesla",
-      model: "Model 3",
-      year: 2023,
-      price: 89,
-      rating: 4.9,
-      trips: 156,
       image:
-        "https://images.unsplash.com/photo-1560958089-b8a1929cea89?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      host: "Sarah M.",
-      location: "San Francisco, CA",
+        "https://images.unsplash.com/photo-1494976688530-41b3fadc59c4?w=300&h=200&fit=crop",
+      alt: "Convertible",
     },
     {
-      id: 2,
-      make: "BMW",
-      model: "X3",
-      year: 2022,
-      price: 75,
-      rating: 4.8,
-      trips: 89,
       image:
-        "https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      host: "Michael R.",
-      location: "Los Angeles, CA",
+        "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=300&h=200&fit=crop",
+      alt: "SUV",
     },
     {
-      id: 3,
-      make: "Audi",
-      model: "A4",
-      year: 2023,
-      price: 68,
-      rating: 4.7,
-      trips: 203,
       image:
-        "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      host: "Emma K.",
-      location: "New York, NY",
+        "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=300&h=200&fit=crop",
+      alt: "Truck",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=300&h=200&fit=crop",
+      alt: "Luxury",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=300&h=200&fit=crop",
+      alt: "Electric",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1542362567-b07e54358753?w=300&h=200&fit=crop",
+      alt: "Minivan",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=300&h=200&fit=crop",
+      alt: "Sports Car",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=300&h=200&fit=crop",
+      alt: "Sedan",
     },
   ];
 
-  const howItWorksSteps = [
+  const browseByMake = [
     {
-      step: 1,
-      title: "Find the perfect car",
-      description: "Choose from hundreds of models in your area",
-      icon: Search,
+      name: "Mercedes-Benz",
+      image:
+        "https://cdn.builder.io/api/v1/image/assets%2F59fb5da5a9b342648db0a1edf457b3c1%2F68a6b9ee4717408c803a78c1d017687c?format=webp&width=800",
     },
     {
-      step: 2,
-      title: "Book instantly",
-      description: "Get approved immediately or book with the host",
-      icon: Calendar,
+      name: "Tesla",
+      image:
+        "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=300&h=200&fit=crop",
     },
     {
-      step: 3,
-      title: "Start your trip",
-      description: "Pick up your car and start your adventure",
-      icon: Clock,
+      name: "Volkswagen",
+      image:
+        "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=300&h=200&fit=crop",
+    },
+    {
+      name: "Porsche",
+      image:
+        "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=300&h=200&fit=crop",
+    },
+    {
+      name: "BMW",
+      image:
+        "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=300&h=200&fit=crop",
     },
   ];
 
-  const features = [
+  const browseByDestination = [
     {
-      title: "24/7 Support",
-      description: "Get help whenever you need it",
-      icon: Smartphone,
+      name: "Miami",
+      image:
+        "https://cdn.builder.io/api/v1/image/assets%2F59fb5da5a9b342648db0a1edf457b3c1%2Ff89f67d56d4d40d0b40363c513e44417?format=webp&width=800",
     },
     {
-      title: "Insurance Included",
-      description: "Every trip includes insurance coverage",
-      icon: Shield,
+      name: "Manchester",
+      image:
+        "https://cdn.builder.io/api/v1/image/assets%2F59fb5da5a9b342648db0a1edf457b3c1%2F46b7c8494e1946ac855420a058aaa14c?format=webp&width=800",
     },
     {
-      title: "Trusted Community",
-      description: "Join millions of satisfied members",
-      icon: Users,
+      name: "London",
+      image:
+        "https://cdn.builder.io/api/v1/image/assets%2F59fb5da5a9b342648db0a1edf457b3c1%2Faf218cdb0bfa477d9a25a53fa6208a5e?format=webp&width=800",
+    },
+    {
+      name: "Dubai",
+      image:
+        "https://cdn.builder.io/api/v1/image/assets%2F59fb5da5a9b342648db0a1edf457b3c1%2F63a82f49e31a448da8ce668491fb9a7b?format=webp&width=800",
+    },
+    {
+      name: "Los Angeles",
+      image:
+        "https://cdn.builder.io/api/v1/image/assets%2F59fb5da5a9b342648db0a1edf457b3c1%2F46ca9b21d1be479a9bde6a4403c2281f?format=webp&width=800",
+    },
+    {
+      name: "Las Vegas",
+      image:
+        "https://cdn.builder.io/api/v1/image/assets%2F59fb5da5a9b342648db0a1edf457b3c1%2Fc02ea3c8be7540f585945d451e0e1679?format=webp&width=800",
     },
   ];
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary-50 to-blue-50 py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
-              Find your perfect
-              <span className="text-primary-600"> car rental</span>
-            </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Book cars from trusted hosts in your neighborhood. Skip the rental
-              car counter and discover the perfect car for your next adventure.
-            </p>
-          </div>
+    <div className="min-h-screen bg-white">
+      {/* Hero Section with couple and red car background */}
+      <section
+        className="relative min-h-[500px] bg-cover bg-no-repeat"
+        style={{
+          backgroundImage: `url('https://cdn.builder.io/api/v1/image/assets%2F59fb5da5a9b342648db0a1edf457b3c1%2Fc5a8eaba578a44699cde37b2327d3daf?format=webp&width=800')`,
+          backgroundPosition: "bottom center",
+        }}
+      >
+        {/* SEARCH FORM - Turo Style */}
+        <div className="absolute inset-x-0 top-4 md:top-8 px-2 md:px-4 lg:px-8">
+          <div className="mx-auto max-w-4xl px-2 md:px-0">
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+              <form onSubmit={handleSearch} className="p-2">
+                {/* Desktop Form */}
+                <div className="hidden md:flex items-stretch bg-white rounded-lg overflow-hidden min-h-[56px]">
+                  {/* WHERE FIELD */}
+                  <div className="flex-1 min-w-0 bg-white border-r border-gray-200">
+                    <div className="px-4 py-3 h-full flex flex-col justify-center">
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        Where
+                      </label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={searchData.location}
+                        onChange={handleChange}
+                        placeholder="City, airport, address or hotel"
+                        className="w-full text-sm text-gray-900 placeholder-gray-500 border-none outline-none bg-transparent"
+                      />
+                    </div>
+                  </div>
 
-          {/* Search Form */}
-          <div className="max-w-4xl mx-auto">
-            <form
-              onSubmit={handleSearch}
-              className="bg-white rounded-2xl shadow-lg p-6 lg:p-8"
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                {/* Location */}
-                <div className="lg:col-span-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Where
-                  </label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  {/* FROM FIELD */}
+                  <div className="flex-shrink-0 w-44 bg-white border-r border-gray-200">
+                    <div className="px-4 py-3 h-full flex flex-col justify-center">
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        From
+                      </label>
+                      <div className="flex items-center space-x-3">
+                        <div className="relative">
+                          <select
+                            name="pickupDate"
+                            value={searchData.pickupDate}
+                            onChange={handleChange}
+                            className="appearance-none bg-transparent text-sm font-medium text-gray-900 pr-4 border-none outline-none cursor-pointer"
+                          >
+                            <option value="19/07/2025">19/07/2025</option>
+                            <option value="20/07/2025">20/07/2025</option>
+                            <option value="21/07/2025">21/07/2025</option>
+                          </select>
+                          <ChevronDown className="absolute right-0 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        </div>
+                        <div className="relative">
+                          <select
+                            name="pickupTime"
+                            value={searchData.pickupTime}
+                            onChange={handleChange}
+                            className="appearance-none bg-transparent text-sm text-gray-700 pr-4 border-none outline-none cursor-pointer"
+                          >
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="12:00">12:00</option>
+                          </select>
+                          <ChevronDown className="absolute right-0 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* UNTIL FIELD */}
+                  <div className="flex-shrink-0 w-44 bg-white border-r border-gray-200">
+                    <div className="px-4 py-3 h-full flex flex-col justify-center">
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        Until
+                      </label>
+                      <div className="flex items-center space-x-3">
+                        <div className="relative">
+                          <select
+                            name="dropoffDate"
+                            value={searchData.dropoffDate}
+                            onChange={handleChange}
+                            className="appearance-none bg-transparent text-sm font-medium text-gray-900 pr-4 border-none outline-none cursor-pointer"
+                          >
+                            <option value="22/07/2025">22/07/2025</option>
+                            <option value="23/07/2025">23/07/2025</option>
+                            <option value="24/07/2025">24/07/2025</option>
+                          </select>
+                          <ChevronDown className="absolute right-0 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        </div>
+                        <div className="relative">
+                          <select
+                            name="dropoffTime"
+                            value={searchData.dropoffTime}
+                            onChange={handleChange}
+                            className="appearance-none bg-transparent text-sm text-gray-700 pr-4 border-none outline-none cursor-pointer"
+                          >
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="12:00">12:00</option>
+                          </select>
+                          <ChevronDown className="absolute right-0 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SEARCH BUTTON */}
+                  <div className="flex-shrink-0 bg-white">
+                    <div className="px-4 py-3 h-full flex items-center justify-center">
+                      <button
+                        type="submit"
+                        className="bg-primary-500 hover:bg-primary-600 text-white p-3 rounded-full transition duration-200 shadow-md"
+                      >
+                        <Search className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mobile Form */}
+                <div className="md:hidden p-4 space-y-3">
+                  {/* WHERE FIELD */}
+                  <div className="space-y-1">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Where
+                    </label>
                     <input
                       type="text"
-                      placeholder="City, state"
+                      name="location"
                       value={searchData.location}
-                      onChange={(e) =>
-                        setSearchData({
-                          ...searchData,
-                          location: e.target.value,
-                        })
-                      }
-                      className="input-field pl-10"
-                      required
+                      onChange={handleChange}
+                      placeholder="City, airport, address or hotel"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                   </div>
-                </div>
 
-                {/* Pickup Date & Time */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Pick-up
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="date"
-                      value={searchData.pickupDate}
-                      onChange={(e) =>
-                        setSearchData({
-                          ...searchData,
-                          pickupDate: e.target.value,
-                        })
-                      }
-                      className="input-field text-sm"
-                      min={new Date().toISOString().split("T")[0]}
-                      required
-                    />
-                    <input
-                      type="time"
-                      value={searchData.pickupTime}
-                      onChange={(e) =>
-                        setSearchData({
-                          ...searchData,
-                          pickupTime: e.target.value,
-                        })
-                      }
-                      className="input-field text-sm"
-                    />
+                  {/* FROM FIELD */}
+                  <div className="space-y-1">
+                    <label className="block text-sm font-medium text-gray-700">
+                      From
+                    </label>
+                    <div className="flex space-x-3">
+                      <div className="flex-1 relative">
+                        <select
+                          name="pickupDate"
+                          value={searchData.pickupDate}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        >
+                          <option value="19/07/2025">21/07/2025</option>
+                          <option value="20/07/2025">20/07/2025</option>
+                          <option value="21/07/2025">21/07/2025</option>
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      </div>
+                      <div className="flex-1 relative">
+                        <select
+                          name="pickupTime"
+                          value={searchData.pickupTime}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        >
+                          <option value="10:00">10:00</option>
+                          <option value="11:00">11:00</option>
+                          <option value="12:00">12:00</option>
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                {/* Dropoff Date & Time */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Drop-off
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="date"
-                      value={searchData.dropoffDate}
-                      onChange={(e) =>
-                        setSearchData({
-                          ...searchData,
-                          dropoffDate: e.target.value,
-                        })
-                      }
-                      className="input-field text-sm"
-                      min={
-                        searchData.pickupDate ||
-                        new Date().toISOString().split("T")[0]
-                      }
-                      required
-                    />
-                    <input
-                      type="time"
-                      value={searchData.dropoffTime}
-                      onChange={(e) =>
-                        setSearchData({
-                          ...searchData,
-                          dropoffTime: e.target.value,
-                        })
-                      }
-                      className="input-field text-sm"
-                    />
+                  {/* UNTIL FIELD */}
+                  <div className="space-y-1">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Until
+                    </label>
+                    <div className="flex space-x-3">
+                      <div className="flex-1 relative">
+                        <select
+                          name="dropoffDate"
+                          value={searchData.dropoffDate}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        >
+                          <option value="22/07/2025">24/07/2025</option>
+                          <option value="23/07/2025">23/07/2025</option>
+                          <option value="24/07/2025">24/07/2025</option>
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      </div>
+                      <div className="flex-1 relative">
+                        <select
+                          name="dropoffTime"
+                          value={searchData.dropoffTime}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        >
+                          <option value="10:00">10:00</option>
+                          <option value="11:00">11:00</option>
+                          <option value="12:00">12:00</option>
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                {/* Search Button */}
-                <div className="flex items-end">
+                  {/* SEARCH BUTTON */}
                   <button
                     type="submit"
-                    className="w-full btn-primary flex items-center justify-center space-x-2"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg font-medium text-lg transition duration-200"
                   >
-                    <Search className="w-5 h-5" />
-                    <span>Search</span>
+                    Search for cars
                   </button>
                 </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </section>
-
-      {/* Admin Setup Banner - For Testing */}
-      <section className="py-4 bg-blue-50 border-y border-blue-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center text-center">
-            <div className="flex items-center space-x-3 text-blue-700">
-              <Shield className="h-5 w-5" />
-              <span className="text-sm">
-                Testing admin features?
-                <Link
-                  to="/admin-setup"
-                  className="ml-2 font-medium underline hover:text-blue-900"
-                >
-                  Create Admin User
-                </Link>
-                {" or "}
-                <Link
-                  to="/login"
-                  className="font-medium underline hover:text-blue-900"
-                >
-                  Login
-                </Link>
-                {" with admin@carshare.com"}
-              </span>
+              </form>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Cars */}
-      <section className="py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Popular cars near you
-            </h2>
-            <p className="text-xl text-gray-600">
-              Discover the most booked cars in your area
+      {/* Main Content Section - Exactly like Turo */}
+      <section
+        className="py-8 md:py-16 px-2 md:px-4"
+        style={{ backgroundColor: "#F4F4F4" }}
+      >
+        <div className="max-w-7xl mx-auto px-2 md:px-0">
+          {/* Title */}
+          <div className="text-center mb-8 md:mb-16">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight">
+              Skip the rental car counter
+            </h1>
+            <p className="text-base md:text-lg text-gray-600">
+              Rent just about any car, just about anywhere
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredCars.map((car) => (
-              <div key={car.id} className="card-hover">
-                <div className="aspect-w-16 aspect-h-9 relative">
+          {/* Car Grid and Text Layout - Side by Side like Turo */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-24 items-start">
+            {/* Left: Car Grid Image */}
+            <div className="lg:col-span-2">
+              <div className="rounded-lg overflow-hidden">
+                <img
+                  src="https://cdn.builder.io/api/v1/image/assets%2F59fb5da5a9b342648db0a1edf457b3c1%2F2d052ed0699f46948523987b7bfb060d?format=webp&width=800"
+                  alt="Car collection grid"
+                  className="w-full h-auto object-cover hover:scale-105 transition duration-300"
+                />
+              </div>
+            </div>
+
+            {/* Right: Text and Purple Button */}
+            <div className="lg:col-span-1 lg:pr-[120px]">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Rent cars for any occasion
+              </h2>
+              <p className="text-gray-600 mb-6 leading-relaxed">
+                Browse an incredible selection of cars, from the everyday to the
+                extraordinary.
+              </p>
+              <button className="bg-accent-500 text-white px-6 py-3 rounded-lg hover:bg-accent-600 transition duration-200 font-medium">
+                Explore cars
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Browse by make - Turo Style */}
+      <section className="py-8 md:py-16 px-2 md:px-4 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-2 md:px-4">
+          <div className="flex items-center justify-between mb-8">
+            <h2
+              className="font-bold text-gray-900"
+              style={{ fontSize: "21px" }}
+            >
+              Browse by make
+            </h2>
+            <div className="flex space-x-2">
+              <button className="p-2 rounded-full bg-white border border-gray-300 hover:bg-gray-50 transition duration-200">
+                <ChevronLeft className="w-5 h-5 text-gray-600" />
+              </button>
+              <button className="p-2 rounded-full bg-white border border-gray-300 hover:bg-gray-50 transition duration-200">
+                <ChevronRight className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6">
+            {browseByMake.map((make, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-300 group cursor-pointer"
+              >
+                <div className="aspect-w-16 aspect-h-10">
                   <img
-                    src={car.image}
-                    alt={`${car.make} ${car.model}`}
-                    className="w-full h-48 object-cover"
+                    src={make.image}
+                    alt={make.name}
+                    className="w-full h-40 object-cover group-hover:scale-105 transition duration-300"
                   />
-                  <div className="absolute top-4 right-4 bg-white px-2 py-1 rounded-lg shadow-sm">
-                    <div className="flex items-center space-x-1">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      <span className="text-sm font-medium">{car.rating}</span>
-                    </div>
-                  </div>
                 </div>
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {car.year} {car.make} {car.model}
-                    </h3>
-                    <div className="text-right">
-                      <p className="text-xl font-bold text-gray-900">
-                        ${car.price}
-                      </p>
-                      <p className="text-sm text-gray-500">per day</p>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 mb-2">{car.location}</p>
-                  <p className="text-sm text-gray-500">
-                    {car.trips} trips • Hosted by {car.host}
-                  </p>
+                <div className="p-4">
+                  <h3 className="font-medium text-base text-gray-900 text-center">
+                    {make.name}
+                  </h3>
                 </div>
               </div>
             ))}
           </div>
-
-          <div className="text-center mt-12">
-            <button onClick={() => navigate("/search")} className="btn-outline">
-              View all cars
-            </button>
-          </div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-16 lg:py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              How CarShare works
+      {/* Browse by destination */}
+      <section className="py-8 md:py-16 px-2 md:px-4 bg-white">
+        <div className="max-w-7xl mx-auto px-2 md:px-4">
+          <div className="flex items-center justify-between mb-8">
+            <h2
+              className="font-bold text-gray-900"
+              style={{ fontSize: "21px" }}
+            >
+              Browse by destination
             </h2>
-            <p className="text-xl text-gray-600">
-              Book a car in just a few simple steps
-            </p>
+            <div className="flex space-x-2">
+              <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition duration-200">
+                <ChevronLeft className="w-5 h-5 text-gray-600" />
+              </button>
+              <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition duration-200">
+                <ChevronRight className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {howItWorksSteps.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div key={item.step} className="text-center">
-                  <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Icon className="w-8 h-8 text-primary-600" />
-                  </div>
-                  <div className="mb-4">
-                    <span className="text-primary-600 font-semibold text-sm">
-                      STEP {item.step}
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                    {item.title}
-                  </h3>
-                  <p className="text-gray-600">{item.description}</p>
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-4 md:gap-8">
+            {browseByDestination.map((destination, index) => (
+              <div key={index} className="text-center group cursor-pointer">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-full border-2 border-gray-200 flex items-center justify-center p-4 group-hover:border-blue-500 transition duration-200 bg-gray-50">
+                  <img
+                    src={destination.image}
+                    alt={destination.name}
+                    className="w-full h-full object-contain"
+                  />
                 </div>
-              );
-            })}
+                <h3 className="font-medium text-sm text-gray-900 group-hover:text-blue-600 transition duration-200">
+                  {destination.name}
+                </h3>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      {/* 2025 car ownership index */}
+      <section className="py-8 md:py-16 px-2 md:px-4 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-2 md:px-0 lg:pl-[120px]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center">
             <div>
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
-                Why choose CarShare?
+              <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 md:mb-6">
+                2025 car ownership index
               </h2>
-              <p className="text-xl text-gray-600 mb-8">
-                Join millions of satisfied members who trust us for their car
-                rental needs.
+              <p className="text-base md:text-lg text-gray-600 mb-6 md:mb-8 leading-relaxed">
+                Explore Rentalosv.com's estimated costs of owning the top 10
+                most popular cars around the country vs. renting on
+                Rentalosv.com.
               </p>
-
-              <div className="space-y-6">
-                {features.map((feature) => {
-                  const Icon = feature.icon;
-                  return (
-                    <div
-                      key={feature.title}
-                      className="flex items-start space-x-4"
-                    >
-                      <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Icon className="w-6 h-6 text-primary-600" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                          {feature.title}
-                        </h3>
-                        <p className="text-gray-600">{feature.description}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              <button className="bg-primary-500 text-white px-8 py-4 rounded-lg hover:bg-primary-600 transition duration-200 font-medium">
+                Read more
+              </button>
             </div>
-
-            <div className="relative">
+            <div className="lg:pl-8">
               <img
-                src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                alt="Car sharing experience"
-                className="rounded-2xl shadow-2xl"
+                src="https://cdn.builder.io/api/v1/image/assets%2F59fb5da5a9b342648db0a1edf457b3c1%2F8a8b9468dde64c4f9a8d1c46698462e8?format=webp&width=800"
+                alt="2025 Car Ownership Index"
+                className="w-full rounded-lg shadow-lg"
               />
-              <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                    <Shield className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">Fully Insured</p>
-                    <p className="text-sm text-gray-500">
-                      Every trip protected
-                    </p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 lg:py-20 bg-primary-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
-            Ready to start your journey?
+      {/* Fuel your daydreams */}
+      <section className="py-10 md:py-20 px-2 md:px-4 bg-white">
+        <div className="max-w-7xl mx-auto text-center">
+          <h2 className="text-2xl md:text-4xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6">
+            Fuel your daydreams
           </h2>
-          <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of car owners earning extra income by sharing their
-            cars, or find the perfect car for your next adventure.
+          <p className="text-base md:text-xl text-gray-600 mb-8 md:mb-12 max-w-3xl mx-auto px-4">
+            Travel stories, news, and inspiration to help you live a remarkable
+            life.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => navigate("/signup")}
-              className="bg-white text-primary-600 font-semibold py-3 px-8 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              Find cars near you
-            </button>
-            <button
-              onClick={() => navigate("/become-host")}
-              className="bg-transparent text-white font-semibold py-3 px-8 rounded-lg border border-white hover:bg-white hover:text-primary-600 transition-colors"
-            >
-              Become a host
-            </button>
+          <button className="bg-accent-500 text-white px-6 md:px-10 py-3 md:py-4 rounded-lg hover:bg-accent-600 transition duration-200 font-medium mb-8 md:mb-16">
+            Explore the Rentalosv blog
+          </button>
+
+          <div className="relative max-w-6xl mx-auto">
+            <img
+              src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop"
+              alt="Scottish Highlands"
+              className="w-full h-48 md:h-96 lg:h-[500px] object-cover rounded-lg shadow-lg"
+            />
+            <div className="absolute bottom-4 left-4 md:bottom-8 md:left-8 bg-gray-900 text-white p-4 md:p-8 rounded-lg max-w-xs md:max-w-sm shadow-xl">
+              <span className="text-sm text-gray-300 font-medium tracking-wide uppercase">
+                FEATURE BLOG
+              </span>
+              <h3 className="text-2xl font-bold mb-3 leading-tight">
+                The ultimate Scottish Highlands road trip
+              </h3>
+              <button className="text-accent-400 hover:text-accent-300 font-medium underline">
+                Read more
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Sections with Two Hands Image */}
+      <section className="py-10 md:py-20 px-2 md:px-4 bg-gray-50">
+        <div className="max-w-4xl mx-auto">
+          {/* Desktop: Image with overlays */}
+          <div className="relative hidden md:block">
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2F59fb5da5a9b342648db0a1edf457b3c1%2F83e8d9586c944cee859cf7ae4f72bf3c?format=webp&width=800"
+              alt="Two hands exchanging keys"
+              className="w-full h-auto rounded-2xl"
+            />
+
+            {/* Book a Car - Left Side Above Left Hand */}
+            <div className="absolute top-1/4 left-1/4 transform -translate-x-1/2 -translate-y-1/2 bg-white bg-opacity-95 p-8 rounded-lg max-w-sm text-center shadow-md">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Book a Car >
+              </h3>
+              <p className="text-base text-gray-700 leading-relaxed">
+                Down the street or across the country, find the perfect vehicle
+                for your next adventure.
+              </p>
+            </div>
+
+            {/* Become a Host - Right Side Below Right Hand */}
+            <div className="absolute bottom-1/4 right-1/4 transform translate-x-1/2 translate-y-1/2 bg-white bg-opacity-95 p-8 rounded-lg max-w-sm text-center shadow-md">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Become a Host >
+              </h3>
+              <p className="text-base text-gray-700 leading-relaxed">
+                Accelerate your entrepreneurship and start building a small car
+                sharing business on rentalosv.com.
+              </p>
+            </div>
+          </div>
+
+          {/* Mobile: Only boxes without background image */}
+          <div className="md:hidden grid grid-cols-1 gap-4">
+            {/* Book a Car */}
+            <div className="bg-white p-6 rounded-lg text-center shadow-md">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Book a Car >
+              </h3>
+              <p className="text-base text-gray-700 leading-relaxed">
+                Down the street or across the country, find the perfect vehicle
+                for your next adventure.
+              </p>
+            </div>
+
+            {/* Become a Host */}
+            <div className="bg-white p-6 rounded-lg text-center shadow-md">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Become a Host >
+              </h3>
+              <p className="text-base text-gray-700 leading-relaxed">
+                Accelerate your entrepreneurship and start building a small car
+                sharing business on rentalosv.com.
+              </p>
+            </div>
           </div>
         </div>
       </section>

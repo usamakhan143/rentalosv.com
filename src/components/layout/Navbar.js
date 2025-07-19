@@ -12,11 +12,18 @@ import {
   Clock,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
+import { useLoginModal } from "../../contexts/LoginModalContext";
+import { useSignupModal } from "../../contexts/SignupModalContext";
+import LoginModal from "../auth/LoginModal";
+import SignupModal from "../auth/SignupModal";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const { currentUser, userProfile, logout } = useAuth();
+  const { isLoginModalOpen, openLoginModal, closeLoginModal } = useLoginModal();
+  const { isSignupModalOpen, openSignupModal, closeSignupModal } =
+    useSignupModal();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -158,22 +165,26 @@ const Navbar = () => {
               <div className="space-y-1">
                 {!currentUser && (
                   <>
-                    <Link
-                      to="/login"
-                      className="block px-6 py-3 text-gray-700 hover:bg-gray-50 font-normal"
+                    <button
+                      className="w-full text-left block px-6 py-3 text-gray-700 hover:bg-gray-50 font-normal"
                       style={{ fontSize: "16px" }}
-                      onClick={() => setIsMenuOpen(false)}
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        openLoginModal();
+                      }}
                     >
                       Log in
-                    </Link>
-                    <Link
-                      to="/signup"
-                      className="block px-6 py-3 text-gray-700 hover:bg-gray-50 font-normal"
+                    </button>
+                    <button
+                      className="w-full text-left block px-6 py-3 text-gray-700 hover:bg-gray-50 font-normal"
                       style={{ fontSize: "16px" }}
-                      onClick={() => setIsMenuOpen(false)}
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        openSignupModal();
+                      }}
                     >
                       Sign up
-                    </Link>
+                    </button>
                     <hr className="my-2" />
                   </>
                 )}
@@ -272,22 +283,26 @@ const Navbar = () => {
               <div className="p-4 space-y-1">
                 {!currentUser && (
                   <>
-                    <Link
-                      to="/login"
-                      className="block px-4 py-4 text-gray-700 hover:bg-gray-50 font-normal"
+                    <button
+                      className="w-full text-left block px-4 py-4 text-gray-700 hover:bg-gray-50 font-normal"
                       style={{ fontSize: "16px" }}
-                      onClick={() => setIsMenuOpen(false)}
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        openLoginModal();
+                      }}
                     >
                       Log in
-                    </Link>
-                    <Link
-                      to="/signup"
-                      className="block px-4 py-4 text-gray-700 hover:bg-gray-50 font-normal"
+                    </button>
+                    <button
+                      className="w-full text-left block px-4 py-4 text-gray-700 hover:bg-gray-50 font-normal"
                       style={{ fontSize: "16px" }}
-                      onClick={() => setIsMenuOpen(false)}
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        openSignupModal();
+                      }}
                     >
                       Sign up
-                    </Link>
+                    </button>
                     <hr className="my-2" />
                   </>
                 )}
@@ -381,6 +396,12 @@ const Navbar = () => {
           onClick={() => setIsMenuOpen(false)}
         />
       )}
+
+      {/* Login Modal */}
+      <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
+
+      {/* Signup Modal */}
+      <SignupModal isOpen={isSignupModalOpen} onClose={closeSignupModal} />
     </nav>
   );
 };

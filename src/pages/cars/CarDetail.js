@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useApp } from "../../contexts/AppContext";
+import { useLoginModal } from "../../contexts/LoginModalContext";
 import {
   carService,
   userService,
@@ -37,6 +38,7 @@ const CarDetail = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const { addNotification } = useApp();
+  const { openLoginModal } = useLoginModal();
 
   const [car, setCar] = useState(null);
   const [host, setHost] = useState(null);
@@ -167,7 +169,7 @@ const CarDetail = () => {
         title: "Sign in required",
         message: "Please sign in to book this car.",
       });
-      navigate("/login");
+      openLoginModal();
       return;
     }
 

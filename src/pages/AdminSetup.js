@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { Shield, User, Key, CheckCircle, AlertCircle } from "lucide-react";
 import Button from "../components/ui/Button";
 import { createDefaultAdminUser } from "../utils/createAdminUser";
+import { useLoginModal } from "../contexts/LoginModalContext";
 
 const AdminSetup = () => {
   const [creating, setCreating] = useState(false);
   const [result, setResult] = useState(null);
+  const { openLoginModal } = useLoginModal();
 
   const handleCreateAdmin = async () => {
     setCreating(true);
@@ -118,12 +120,12 @@ const AdminSetup = () => {
                 <ol className="text-sm text-gray-600 space-y-2 list-decimal list-inside">
                   <li>
                     Go to the{" "}
-                    <a
-                      href="/login"
-                      className="text-primary-600 hover:text-primary-700"
+                    <button
+                      onClick={openLoginModal}
+                      className="text-primary-600 hover:text-primary-700 underline"
                     >
                       Login page
-                    </a>
+                    </button>
                   </li>
                   <li>Sign in with the admin credentials above</li>
                   <li>
@@ -141,8 +143,7 @@ const AdminSetup = () => {
 
               <div className="flex space-x-3">
                 <Button
-                  as="a"
-                  href="/login"
+                  onClick={openLoginModal}
                   className="flex-1"
                   variant="primary"
                 >

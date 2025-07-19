@@ -12,7 +12,7 @@ const ProtectedRoute = ({
 
   // If authentication is required but user is not logged in
   if (requireAuth && !currentUser) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   // If specific role is required

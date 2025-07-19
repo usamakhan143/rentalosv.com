@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, User, Phone, Car } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useApp } from "../../contexts/AppContext";
+import { useLoginModal } from "../../contexts/LoginModalContext";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -21,6 +22,7 @@ const Signup = () => {
 
   const { signup, signInWithGoogle } = useAuth();
   const { addNotification } = useApp();
+  const { openLoginModal } = useLoginModal();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -118,12 +120,12 @@ const Signup = () => {
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Already have an account?{" "}
-          <Link
-            to="/login"
+          <button
+            onClick={openLoginModal}
             className="font-medium text-primary-600 hover:text-primary-500"
           >
             Sign in here
-          </Link>
+          </button>
         </p>
       </div>
 

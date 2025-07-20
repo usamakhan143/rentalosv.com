@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Menu,
   X,
@@ -25,7 +25,6 @@ const Navbar = () => {
   const { isSignupModalOpen, openSignupModal, closeSignupModal } =
     useSignupModal();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleLogout = async () => {
     try {
@@ -211,16 +210,18 @@ const Navbar = () => {
                   </span>
                 </Link>
 
-                <Link
-                  to="/contact"
-                  className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50"
-                  onClick={() => setIsMenuOpen(false)}
+                <button
+                  className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50 w-full text-left"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    openLoginModal();
+                  }}
                 >
                   <User className="w-5 h-5 mr-3" />
                   <span className="font-normal" style={{ fontSize: "16px" }}>
                     Contact support
                   </span>
-                </Link>
+                </button>
 
                 <Link
                   to="/legal"
@@ -329,16 +330,18 @@ const Navbar = () => {
                   </span>
                 </Link>
 
-                <Link
-                  to="/contact"
-                  className="flex items-center px-4 py-4 text-gray-700 hover:bg-gray-50"
-                  onClick={() => setIsMenuOpen(false)}
+                <button
+                  className="flex items-center px-4 py-4 text-gray-700 hover:bg-gray-50 w-full text-left"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    openLoginModal();
+                  }}
                 >
                   <User className="w-5 h-5 mr-3" />
                   <span className="font-normal" style={{ fontSize: "16px" }}>
                     Contact support
                   </span>
-                </Link>
+                </button>
 
                 <Link
                   to="/legal"

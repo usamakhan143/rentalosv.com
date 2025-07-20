@@ -25,6 +25,14 @@ import AdminPanel from "./pages/admin/AdminPanel";
 import Settings from "./pages/user/Settings";
 import BecomeHost from "./pages/BecomeHost";
 import HowItWorks from "./pages/HowItWorks";
+import Legal from "./pages/Legal";
+import InsuranceProtection from "./pages/InsuranceProtection";
+import HostTools from "./pages/HostTools";
+import Calculator from "./pages/Calculator";
+import About from "./pages/About";
+import Team from "./pages/Team";
+import Careers from "./pages/Careers";
+import Press from "./pages/Press";
 import AdminSetup from "./pages/AdminSetup";
 import NotFound from "./pages/NotFound";
 import Unauthorized from "./pages/Unauthorized";
@@ -49,6 +57,17 @@ function App() {
                     <Route path="/cars/:id" element={<CarDetail />} />
                     <Route path="/become-host" element={<BecomeHost />} />
                     <Route path="/how-it-works" element={<HowItWorks />} />
+                    <Route path="/legal" element={<Legal />} />
+                    <Route
+                      path="/insurance"
+                      element={<InsuranceProtection />}
+                    />
+                    <Route path="/host-tools" element={<HostTools />} />
+                    <Route path="/calculator" element={<Calculator />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/team" element={<Team />} />
+                    <Route path="/careers" element={<Careers />} />
+                    <Route path="/press" element={<Press />} />
                     <Route path="/admin-setup" element={<AdminSetup />} />
 
                     {/* Protected Routes - Require Authentication */}

@@ -9,11 +9,9 @@ const Footer = () => {
     rentalosv: [
       { label: "About", to: "/about" },
       { label: "Team", to: "/team" },
-      { label: "Policies", to: "/policies" },
+      { label: "Policies", to: "/legal" },
       { label: "Careers", to: "/careers" },
       { label: "Press", to: "/press" },
-      { label: "OpenRoad", to: "/openroad" },
-      { label: "Investor relations", to: "/investor" },
     ],
     locations: [
       { label: "USA (EN)", to: "/usa" },
@@ -252,26 +250,23 @@ const Footer = () => {
           <div className="flex flex-col lg:flex-row justify-between items-center space-y-6 lg:space-y-0">
             <div className="flex flex-wrap items-center justify-center lg:justify-start space-x-6 text-xs text-gray-600">
               <Link
-                to="/terms"
+                to="/legal"
                 className="hover:text-gray-900 transition duration-200"
               >
                 Terms
               </Link>
               <Link
-                to="/privacy"
+                to="/legal"
                 className="hover:text-gray-900 transition duration-200"
               >
                 Privacy
               </Link>
               <Link
-                to="/cookies"
+                to="/legal"
                 className="hover:text-gray-900 transition duration-200"
               >
                 Cookie preferences
               </Link>
-              <span className="cursor-pointer hover:text-gray-900 transition duration-200">
-                Do not sell or share my personal information
-              </span>
             </div>
 
             <div className="text-xs text-gray-500">

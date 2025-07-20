@@ -109,7 +109,7 @@ const Team = () => {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="py-20 px-4">
-        <div className="mx-auto px-0 lg:px-[160px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center max-w-4xl mx-auto">
             <h1
               className="text-5xl lg:text-6xl font-bold mb-6"
@@ -157,7 +157,7 @@ const Team = () => {
 
       {/* Executive Team */}
       <section className="py-20 px-4 bg-gray-50">
-        <div className="mx-auto px-0 lg:px-[160px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center mb-16">
             <h2
               className="text-4xl font-bold mb-4"
@@ -231,7 +231,7 @@ const Team = () => {
 
       {/* Departments */}
       <section className="py-20 px-4">
-        <div className="mx-auto px-0 lg:px-[160px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center mb-16">
             <h2
               className="text-4xl font-bold mb-4"
@@ -284,7 +284,7 @@ const Team = () => {
 
       {/* Culture & Values */}
       <section className="py-20 px-4 bg-gray-50">
-        <div className="mx-auto px-0 lg:px-[160px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center mb-16">
             <h2
               className="text-4xl font-bold mb-4"
@@ -321,7 +321,7 @@ const Team = () => {
 
       {/* Join Us Section */}
       <section className="py-20 px-4">
-        <div className="mx-auto px-0 lg:px-[160px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-12 text-center">
             <h2
               className="text-4xl font-bold mb-6"
@@ -360,7 +360,7 @@ const Team = () => {
 
       {/* Contact Section */}
       <section className="py-20 px-4" style={{ backgroundColor: "#003552" }}>
-        <div className="mx-auto px-0 lg:px-[160px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center max-w-4xl mx-auto">
             <h2 className="text-4xl font-bold text-white mb-6">
               Want to get in touch?

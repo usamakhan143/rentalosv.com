@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Filter,
@@ -10,10 +10,12 @@ import {
   X,
   Grid,
   List,
+  Search as SearchIcon,
+  ChevronDown,
 } from "lucide-react";
 import { useApp } from "../../contexts/AppContext";
 import { carService } from "../../services/firestore";
-import Input, { Select } from "../../components/ui/Input";
+import { Select } from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import Modal from "../../components/ui/Modal";
@@ -34,6 +36,8 @@ const Search = () => {
     location: searchFilters.location || "",
     pickupDate: searchFilters.pickupDate || null,
     dropoffDate: searchFilters.dropoffDate || null,
+    pickupTime: "10:00",
+    dropoffTime: "10:00",
     priceRange: [0, 500],
     vehicleType: "",
     transmission: "",
@@ -97,7 +101,7 @@ const Search = () => {
     }
   };
 
-  const applyFiltersAndSort = () => {
+  const applyFiltersAndSort = useCallback(() => {
     let filtered = [...cars];
 
     // Location filter
@@ -212,7 +216,7 @@ const Search = () => {
     }
 
     setFilteredCars(filtered);
-  };
+  }, [cars, filters, sortBy]);
 
   useEffect(() => {
     fetchCars();
@@ -220,7 +224,7 @@ const Search = () => {
 
   useEffect(() => {
     applyFiltersAndSort();
-  }, [cars, filters, sortBy]);
+  }, [applyFiltersAndSort]);
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({
@@ -394,47 +398,291 @@ const Search = () => {
       <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex-1 max-w-2xl">
-              <div className="flex items-center space-x-4">
-                <div className="flex-1">
-                  <Input
-                    placeholder="Where do you want to go?"
-                    value={filters.location}
-                    onChange={(e) =>
-                      handleFilterChange("location", e.target.value)
-                    }
-                    icon={<MapPin className="w-4 h-4" />}
-                  />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="date"
-                    value={
-                      filters.pickupDate?.toISOString().split("T")[0] || ""
-                    }
-                    onChange={(e) =>
-                      handleFilterChange("pickupDate", new Date(e.target.value))
-                    }
-                    className="input-field"
-                    min={new Date().toISOString().split("T")[0]}
-                  />
-                  <input
-                    type="date"
-                    value={
-                      filters.dropoffDate?.toISOString().split("T")[0] || ""
-                    }
-                    onChange={(e) =>
-                      handleFilterChange(
-                        "dropoffDate",
-                        new Date(e.target.value),
-                      )
-                    }
-                    className="input-field"
-                    min={
-                      filters.pickupDate?.toISOString().split("T")[0] ||
-                      new Date().toISOString().split("T")[0]
-                    }
-                  />
+            <div className="flex-1 max-w-4xl">
+              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div className="p-2">
+                  {/* Desktop Form */}
+                  <div className="hidden md:flex items-stretch bg-white rounded-lg overflow-hidden min-h-[48px]">
+                    {/* WHERE FIELD */}
+                    <div className="flex-1 min-w-0 bg-white border-r border-gray-200">
+                      <div className="px-3 py-0 h-full flex flex-col justify-center">
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Where
+                        </label>
+                        <input
+                          type="text"
+                          name="location"
+                          value={filters.location}
+                          onChange={(e) =>
+                            handleFilterChange("location", e.target.value)
+                          }
+                          placeholder="City, airport, address or hotel"
+                          className="w-full text-base text-gray-900 placeholder-gray-500 border-none outline-none bg-transparent"
+                          style={{ fontSize: "16px" }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* FROM FIELD */}
+                    <div className="flex-shrink-0 w-48 bg-white border-r border-gray-200">
+                      <div className="px-3 py-0 h-full flex flex-col justify-center">
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          From
+                        </label>
+                        <div className="flex items-center space-x-2">
+                          <div className="relative">
+                            <input
+                              type="date"
+                              value={
+                                filters.pickupDate
+                                  ?.toISOString()
+                                  .split("T")[0] || ""
+                              }
+                              onChange={(e) =>
+                                handleFilterChange(
+                                  "pickupDate",
+                                  new Date(e.target.value),
+                                )
+                              }
+                              className="appearance-none bg-transparent font-medium text-gray-900 pr-4 border-none outline-none cursor-pointer"
+                              style={{ fontSize: "16px", paddingRight: "17px" }}
+                              min={new Date().toISOString().split("T")[0]}
+                            />
+                          </div>
+                          <div className="relative">
+                            <select
+                              name="pickupTime"
+                              value={filters.pickupTime}
+                              onChange={(e) =>
+                                handleFilterChange("pickupTime", e.target.value)
+                              }
+                              className="appearance-none bg-transparent text-gray-700 pr-4 border-none outline-none cursor-pointer"
+                              style={{ fontSize: "16px", paddingRight: "17px" }}
+                            >
+                              <option value="10:00">10:00</option>
+                              <option value="11:00">11:00</option>
+                              <option value="12:00">12:00</option>
+                            </select>
+                            <ChevronDown className="absolute right-0 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* UNTIL FIELD */}
+                    <div className="flex-shrink-0 w-48 bg-white border-r border-gray-200">
+                      <div className="px-3 py-0 h-full flex flex-col justify-center">
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Until
+                        </label>
+                        <div className="flex items-center space-x-2">
+                          <div className="relative">
+                            <input
+                              type="date"
+                              value={
+                                filters.dropoffDate
+                                  ?.toISOString()
+                                  .split("T")[0] || ""
+                              }
+                              onChange={(e) =>
+                                handleFilterChange(
+                                  "dropoffDate",
+                                  new Date(e.target.value),
+                                )
+                              }
+                              className="appearance-none bg-transparent font-medium text-gray-900 pr-4 border-none outline-none cursor-pointer"
+                              style={{ fontSize: "16px", paddingRight: "17px" }}
+                              min={
+                                filters.pickupDate
+                                  ?.toISOString()
+                                  .split("T")[0] ||
+                                new Date().toISOString().split("T")[0]
+                              }
+                            />
+                          </div>
+                          <div className="relative">
+                            <select
+                              name="dropoffTime"
+                              value={filters.dropoffTime}
+                              onChange={(e) =>
+                                handleFilterChange(
+                                  "dropoffTime",
+                                  e.target.value,
+                                )
+                              }
+                              className="appearance-none bg-transparent text-gray-700 pr-4 border-none outline-none cursor-pointer"
+                              style={{ fontSize: "16px", paddingRight: "17px" }}
+                            >
+                              <option value="10:00">10:00</option>
+                              <option value="11:00">11:00</option>
+                              <option value="12:00">12:00</option>
+                            </select>
+                            <ChevronDown className="absolute right-0 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* SEARCH BUTTON */}
+                    <div className="flex-shrink-0 bg-white">
+                      <div className="px-3 py-0 h-full flex items-center justify-center">
+                        <button
+                          type="submit"
+                          className="bg-primary-500 hover:bg-primary-600 text-white p-2.5 rounded-full transition duration-200 shadow-md"
+                        >
+                          <SearchIcon className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Mobile Form */}
+                  <div
+                    className="md:hidden space-y-3"
+                    style={{ padding: "4px 16px 16px" }}
+                  >
+                    {/* WHERE FIELD */}
+                    <div className="space-y-1">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Where
+                      </label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={filters.location}
+                        onChange={(e) =>
+                          handleFilterChange("location", e.target.value)
+                        }
+                        placeholder="City, airport, address or hotel"
+                        className="w-full px-4 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        style={{
+                          fontSize: "16px",
+                          paddingTop: "2px",
+                          paddingBottom: "2px",
+                        }}
+                      />
+                    </div>
+
+                    {/* FROM FIELD */}
+                    <div className="space-y-1">
+                      <label className="block text-sm font-medium text-gray-700">
+                        From
+                      </label>
+                      <div className="flex space-x-3">
+                        <div className="flex-1 relative">
+                          <input
+                            type="date"
+                            value={
+                              filters.pickupDate?.toISOString().split("T")[0] ||
+                              ""
+                            }
+                            onChange={(e) =>
+                              handleFilterChange(
+                                "pickupDate",
+                                new Date(e.target.value),
+                              )
+                            }
+                            className="w-full px-4 border border-gray-300 rounded-lg text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            style={{
+                              fontSize: "16px",
+                              paddingTop: "2px",
+                              paddingBottom: "2px",
+                            }}
+                            min={new Date().toISOString().split("T")[0]}
+                          />
+                        </div>
+                        <div className="flex-1 relative">
+                          <select
+                            name="pickupTime"
+                            value={filters.pickupTime}
+                            onChange={(e) =>
+                              handleFilterChange("pickupTime", e.target.value)
+                            }
+                            className="w-full px-4 border border-gray-300 rounded-lg text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            style={{
+                              fontSize: "16px",
+                              paddingTop: "2px",
+                              paddingBottom: "2px",
+                            }}
+                          >
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="12:00">12:00</option>
+                          </select>
+                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* UNTIL FIELD */}
+                    <div className="space-y-1">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Until
+                      </label>
+                      <div className="flex space-x-3">
+                        <div className="flex-1 relative">
+                          <input
+                            type="date"
+                            value={
+                              filters.dropoffDate
+                                ?.toISOString()
+                                .split("T")[0] || ""
+                            }
+                            onChange={(e) =>
+                              handleFilterChange(
+                                "dropoffDate",
+                                new Date(e.target.value),
+                              )
+                            }
+                            className="w-full px-4 border border-gray-300 rounded-lg text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            style={{
+                              fontSize: "16px",
+                              paddingTop: "2px",
+                              paddingBottom: "2px",
+                            }}
+                            min={
+                              filters.pickupDate?.toISOString().split("T")[0] ||
+                              new Date().toISOString().split("T")[0]
+                            }
+                          />
+                        </div>
+                        <div className="flex-1 relative">
+                          <select
+                            name="dropoffTime"
+                            value={filters.dropoffTime}
+                            onChange={(e) =>
+                              handleFilterChange("dropoffTime", e.target.value)
+                            }
+                            className="w-full px-4 border border-gray-300 rounded-lg text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            style={{
+                              fontSize: "16px",
+                              paddingTop: "2px",
+                              paddingBottom: "2px",
+                            }}
+                          >
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="12:00">12:00</option>
+                          </select>
+                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* SEARCH BUTTON */}
+                    <button
+                      type="submit"
+                      className="w-full text-white rounded-lg font-medium transition duration-200"
+                      style={{
+                        backgroundColor: "#003552",
+                        fontSize: "16px",
+                        paddingTop: "6px",
+                        paddingBottom: "6px",
+                      }}
+                    >
+                      Search for cars
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

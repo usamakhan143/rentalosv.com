@@ -22,20 +22,14 @@ const Footer = () => {
       { label: "UK (EN)", to: "/uk" },
     ],
     explore: [
-      { label: "Book cars", to: "/search" },
-      { label: "Weddings & events", to: "/weddings" },
       { label: "Business", to: "/business" },
       { label: "Long-term car rentals", to: "/long-term" },
-      { label: "CarShare", to: "/carshare" },
-      { label: "All-Star Host rewards", to: "/rewards" },
     ],
     hosting: [
       { label: "List your car", to: "/become-host" },
-      { label: "Carculator", to: "/carculator" },
-      { label: "All-Star Host", to: "/all-star" },
+      { label: "Carculator", to: "/calculator" },
       { label: "Host tools", to: "/host-tools" },
       { label: "Insurance & protection", to: "/insurance" },
-      { label: "Protection plans", to: "/protection" },
     ],
     vehicleTypes: [
       { label: "Car rentals", to: "/car-rentals" },

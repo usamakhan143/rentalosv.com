@@ -1,5 +1,5 @@
 import React from "react";
-import { Users, Globe, Car, Shield, Heart, Award } from "lucide-react";
+import { Users, Globe, Shield, Heart, Award } from "lucide-react";
 
 const About = () => {
   const stats = [
@@ -61,7 +61,7 @@ const About = () => {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="py-20 px-4">
-        <div className="mx-auto px-0 lg:px-[85px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Left Side - Image */}
             <div className="relative order-2 lg:order-1">
@@ -141,7 +141,7 @@ const About = () => {
 
       {/* Mission Section */}
       <section className="py-20 px-4 bg-gray-50">
-        <div className="mx-auto px-0 lg:px-[170px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2
@@ -193,7 +193,7 @@ const About = () => {
 
       {/* Values Section */}
       <section className="py-20 px-4">
-        <div className="mx-auto px-0 lg:px-[170px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center mb-16">
             <h2
               className="text-4xl font-bold mb-4"
@@ -239,7 +239,7 @@ const About = () => {
 
       {/* Leadership Section */}
       <section className="py-20 px-4 bg-gray-50">
-        <div className="mx-auto px-0 lg:px-[170px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center mb-16">
             <h2
               className="text-4xl font-bold mb-4"
@@ -285,7 +285,7 @@ const About = () => {
 
       {/* Story Section */}
       <section className="py-20 px-4">
-        <div className="mx-auto px-0 lg:px-[170px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
               <h2
@@ -378,7 +378,7 @@ const About = () => {
 
       {/* CTA Section */}
       <section className="py-20 px-4" style={{ backgroundColor: "#003552" }}>
-        <div className="mx-auto px-0 lg:px-[170px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center max-w-4xl mx-auto">
             <h2 className="text-4xl font-bold text-white mb-6">
               Join our mission

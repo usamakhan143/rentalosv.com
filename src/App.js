@@ -33,12 +33,14 @@ import About from "./pages/About";
 import Team from "./pages/Team";
 import Careers from "./pages/Careers";
 import Press from "./pages/Press";
+import CarMake from "./pages/CarMake";
 import AdminSetup from "./pages/AdminSetup";
 import NotFound from "./pages/NotFound";
 import Unauthorized from "./pages/Unauthorized";
 
 // Notification Component
 import NotificationToast from "./components/NotificationToast";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
@@ -47,6 +49,7 @@ function App() {
         <AppProvider>
           <LoginModalProvider>
             <SignupModalProvider>
+              <ScrollToTop />
               <div className="min-h-screen flex flex-col">
                 <Navbar />
                 <main className="flex-1">
@@ -68,6 +71,7 @@ function App() {
                     <Route path="/team" element={<Team />} />
                     <Route path="/careers" element={<Careers />} />
                     <Route path="/press" element={<Press />} />
+                    <Route path="/:make" element={<CarMake />} />
                     <Route path="/admin-setup" element={<AdminSetup />} />
 
                     {/* Protected Routes - Require Authentication */}

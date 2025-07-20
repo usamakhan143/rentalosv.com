@@ -139,7 +139,7 @@ const Press = () => {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="py-20 px-4">
-        <div className="mx-auto px-0 lg:px-[140px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center max-w-4xl mx-auto">
             <h1
               className="text-5xl lg:text-6xl font-bold mb-6"
@@ -187,7 +187,7 @@ const Press = () => {
 
       {/* Press Contact */}
       <section className="py-16 px-4 bg-gray-50">
-        <div className="mx-auto px-0 lg:px-[140px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2
@@ -267,7 +267,7 @@ const Press = () => {
 
       {/* Press Releases */}
       <section className="py-20 px-4">
-        <div className="mx-auto px-0 lg:px-[140px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center mb-16">
             <h2
               className="text-4xl font-bold mb-4"
@@ -358,7 +358,7 @@ const Press = () => {
 
       {/* Media Kit */}
       <section className="py-20 px-4 bg-gray-50">
-        <div className="mx-auto px-0 lg:px-[140px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center mb-16">
             <h2
               className="text-4xl font-bold mb-4"
@@ -425,7 +425,7 @@ const Press = () => {
 
       {/* Awards & Recognition */}
       <section className="py-20 px-4">
-        <div className="mx-auto px-0 lg:px-[140px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center mb-16">
             <h2
               className="text-4xl font-bold mb-4"
@@ -468,7 +468,7 @@ const Press = () => {
 
       {/* CTA Section */}
       <section className="py-20 px-4" style={{ backgroundColor: "#003552" }}>
-        <div className="mx-auto px-0 lg:px-[140px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center max-w-4xl mx-auto">
             <h2 className="text-4xl font-bold text-white mb-6">
               Stay connected

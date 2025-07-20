@@ -261,7 +261,7 @@ const HowItWorks = () => {
 
       {/* Background Image Section */}
       <section
-        className="w-full h-[348px] lg:h-[600px] bg-cover bg-center relative"
+        className="w-full h-[450px] lg:h-[600px] bg-cover bg-center relative"
         style={{
           backgroundImage: `url('https://cdn.builder.io/api/v1/image/assets%2F59fb5da5a9b342648db0a1edf457b3c1%2Fa1aad103009f4005a0dfe867919ef116?format=webp&width=800')`,
         }}

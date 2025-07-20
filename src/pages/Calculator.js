@@ -164,7 +164,7 @@ const Calculator = () => {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-50 to-indigo-100 py-20 px-4">
-        <div className="mx-auto px-0 lg:px-[170px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center max-w-4xl mx-auto">
             <div className="flex justify-center mb-6">
               <div
@@ -191,7 +191,7 @@ const Calculator = () => {
 
       {/* Calculator Section */}
       <section className="py-20 px-4">
-        <div className="mx-auto px-0 lg:px-[170px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Calculator Form */}
             <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
@@ -525,7 +525,7 @@ const Calculator = () => {
 
       {/* Market Insights */}
       <section className="py-20 px-4 bg-gray-50">
-        <div className="mx-auto px-0 lg:px-[170px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center mb-16">
             <h2
               className="text-4xl font-bold mb-4"
@@ -578,7 +578,7 @@ const Calculator = () => {
 
       {/* Tips Section */}
       <section className="py-20 px-4">
-        <div className="mx-auto px-0 lg:px-[170px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center mb-16">
             <h2
               className="text-4xl font-bold mb-4"
@@ -657,7 +657,7 @@ const Calculator = () => {
 
       {/* CTA Section */}
       <section className="py-20 px-4" style={{ backgroundColor: "#003552" }}>
-        <div className="mx-auto px-0 lg:px-[170px]">
+        <div className="mx-auto px-0 lg:px-[120px]">
           <div className="text-center max-w-4xl mx-auto">
             <h2 className="text-4xl font-bold text-white mb-6">
               Start Earning with Your Car Today

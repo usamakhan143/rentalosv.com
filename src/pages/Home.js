@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Search, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useApp } from "../contexts/AppContext";
 
@@ -35,49 +35,6 @@ const Home = () => {
       [e.target.name]: e.target.value,
     });
   };
-
-  const rentCarsData = [
-    {
-      image:
-        "https://images.unsplash.com/photo-1494976688530-41b3fadc59c4?w=300&h=200&fit=crop",
-      alt: "Convertible",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=300&h=200&fit=crop",
-      alt: "SUV",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=300&h=200&fit=crop",
-      alt: "Truck",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=300&h=200&fit=crop",
-      alt: "Luxury",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=300&h=200&fit=crop",
-      alt: "Electric",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1542362567-b07e54358753?w=300&h=200&fit=crop",
-      alt: "Minivan",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=300&h=200&fit=crop",
-      alt: "Sports Car",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=300&h=200&fit=crop",
-      alt: "Sedan",
-    },
-  ];
 
   const browseByMake = [
     {
@@ -144,22 +101,30 @@ const Home = () => {
     <div className="min-h-screen bg-white">
       {/* Hero Section with couple and red car background */}
       <section
-        className="relative min-h-[500px] bg-cover bg-no-repeat"
+        className="relative min-h-[500px] md:min-h-[550px] bg-cover bg-no-repeat"
         style={{
-          backgroundImage: `url('https://cdn.builder.io/api/v1/image/assets%2F59fb5da5a9b342648db0a1edf457b3c1%2Fc5a8eaba578a44699cde37b2327d3daf?format=webp&width=800')`,
+          backgroundImage: `url('https://cdn.builder.io/api/v1/image/assets%2F59fb5da5a9b342648db0a1edf457b3c1%2Ff337fed407f146e28195206db7b1a860?format=webp&width=1920')`,
           backgroundPosition: "bottom center",
         }}
       >
+        {/* Desktop background image overlay */}
+        <div
+          className="hidden md:block absolute inset-0 bg-cover bg-no-repeat"
+          style={{
+            backgroundImage: `url('https://cdn.builder.io/api/v1/image/assets%2F59fb5da5a9b342648db0a1edf457b3c1%2F8c882181656e42d98121816c41c1bbb9?format=webp&width=1920')`,
+            backgroundPosition: "center center",
+          }}
+        ></div>
         {/* SEARCH FORM - Turo Style */}
         <div className="absolute inset-x-0 top-4 md:top-8 px-2 md:px-4 lg:px-8">
           <div className="mx-auto max-w-4xl px-2 md:px-0">
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
               <form onSubmit={handleSearch} className="p-2">
                 {/* Desktop Form */}
-                <div className="hidden md:flex items-stretch bg-white rounded-lg overflow-hidden min-h-[56px]">
+                <div className="hidden md:flex items-stretch bg-white rounded-lg overflow-hidden min-h-[48px]">
                   {/* WHERE FIELD */}
                   <div className="flex-1 min-w-0 bg-white border-r border-gray-200">
-                    <div className="px-4 py-3 h-full flex flex-col justify-center">
+                    <div className="px-3 py-0 h-full flex flex-col justify-center">
                       <label className="block text-xs font-medium text-gray-700 mb-1">
                         Where
                       </label>
@@ -169,24 +134,26 @@ const Home = () => {
                         value={searchData.location}
                         onChange={handleChange}
                         placeholder="City, airport, address or hotel"
-                        className="w-full text-sm text-gray-900 placeholder-gray-500 border-none outline-none bg-transparent"
+                        className="w-full text-base text-gray-900 placeholder-gray-500 border-none outline-none bg-transparent"
+                        style={{ fontSize: "16px" }}
                       />
                     </div>
                   </div>
 
                   {/* FROM FIELD */}
-                  <div className="flex-shrink-0 w-44 bg-white border-r border-gray-200">
-                    <div className="px-4 py-3 h-full flex flex-col justify-center">
+                  <div className="flex-shrink-0 w-48 bg-white border-r border-gray-200">
+                    <div className="px-3 py-0 h-full flex flex-col justify-center">
                       <label className="block text-xs font-medium text-gray-700 mb-1">
                         From
                       </label>
-                      <div className="flex items-center space-x-3">
+                      <div className="flex items-center space-x-2">
                         <div className="relative">
                           <select
                             name="pickupDate"
                             value={searchData.pickupDate}
                             onChange={handleChange}
-                            className="appearance-none bg-transparent text-sm font-medium text-gray-900 pr-4 border-none outline-none cursor-pointer"
+                            className="appearance-none bg-transparent font-medium text-gray-900 pr-4 border-none outline-none cursor-pointer"
+                            style={{ fontSize: "16px", paddingRight: "17px" }}
                           >
                             <option value="19/07/2025">19/07/2025</option>
                             <option value="20/07/2025">20/07/2025</option>
@@ -199,7 +166,8 @@ const Home = () => {
                             name="pickupTime"
                             value={searchData.pickupTime}
                             onChange={handleChange}
-                            className="appearance-none bg-transparent text-sm text-gray-700 pr-4 border-none outline-none cursor-pointer"
+                            className="appearance-none bg-transparent text-gray-700 pr-4 border-none outline-none cursor-pointer"
+                            style={{ fontSize: "16px", paddingRight: "17px" }}
                           >
                             <option value="10:00">10:00</option>
                             <option value="11:00">11:00</option>
@@ -212,18 +180,19 @@ const Home = () => {
                   </div>
 
                   {/* UNTIL FIELD */}
-                  <div className="flex-shrink-0 w-44 bg-white border-r border-gray-200">
-                    <div className="px-4 py-3 h-full flex flex-col justify-center">
+                  <div className="flex-shrink-0 w-48 bg-white border-r border-gray-200">
+                    <div className="px-3 py-0 h-full flex flex-col justify-center">
                       <label className="block text-xs font-medium text-gray-700 mb-1">
                         Until
                       </label>
-                      <div className="flex items-center space-x-3">
+                      <div className="flex items-center space-x-2">
                         <div className="relative">
                           <select
                             name="dropoffDate"
                             value={searchData.dropoffDate}
                             onChange={handleChange}
-                            className="appearance-none bg-transparent text-sm font-medium text-gray-900 pr-4 border-none outline-none cursor-pointer"
+                            className="appearance-none bg-transparent font-medium text-gray-900 pr-4 border-none outline-none cursor-pointer"
+                            style={{ fontSize: "16px", paddingRight: "17px" }}
                           >
                             <option value="22/07/2025">22/07/2025</option>
                             <option value="23/07/2025">23/07/2025</option>
@@ -236,7 +205,8 @@ const Home = () => {
                             name="dropoffTime"
                             value={searchData.dropoffTime}
                             onChange={handleChange}
-                            className="appearance-none bg-transparent text-sm text-gray-700 pr-4 border-none outline-none cursor-pointer"
+                            className="appearance-none bg-transparent text-gray-700 pr-4 border-none outline-none cursor-pointer"
+                            style={{ fontSize: "16px", paddingRight: "17px" }}
                           >
                             <option value="10:00">10:00</option>
                             <option value="11:00">11:00</option>
@@ -250,19 +220,22 @@ const Home = () => {
 
                   {/* SEARCH BUTTON */}
                   <div className="flex-shrink-0 bg-white">
-                    <div className="px-4 py-3 h-full flex items-center justify-center">
+                    <div className="px-3 py-0 h-full flex items-center justify-center">
                       <button
                         type="submit"
-                        className="bg-primary-500 hover:bg-primary-600 text-white p-3 rounded-full transition duration-200 shadow-md"
+                        className="bg-primary-500 hover:bg-primary-600 text-white p-2.5 rounded-full transition duration-200 shadow-md"
                       >
-                        <Search className="w-5 h-5" />
+                        <Search className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
                 </div>
 
                 {/* Mobile Form */}
-                <div className="md:hidden p-4 space-y-3">
+                <div
+                  className="md:hidden space-y-3"
+                  style={{ padding: "4px 16px 16px" }}
+                >
                   {/* WHERE FIELD */}
                   <div className="space-y-1">
                     <label className="block text-sm font-medium text-gray-700">
@@ -274,7 +247,12 @@ const Home = () => {
                       value={searchData.location}
                       onChange={handleChange}
                       placeholder="City, airport, address or hotel"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-4 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      style={{
+                        fontSize: "16px",
+                        paddingTop: "2px",
+                        paddingBottom: "2px",
+                      }}
                     />
                   </div>
 
@@ -289,7 +267,12 @@ const Home = () => {
                           name="pickupDate"
                           value={searchData.pickupDate}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-4 border border-gray-300 rounded-lg text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          style={{
+                            fontSize: "16px",
+                            paddingTop: "2px",
+                            paddingBottom: "2px",
+                          }}
                         >
                           <option value="19/07/2025">21/07/2025</option>
                           <option value="20/07/2025">20/07/2025</option>
@@ -302,7 +285,12 @@ const Home = () => {
                           name="pickupTime"
                           value={searchData.pickupTime}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-4 border border-gray-300 rounded-lg text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          style={{
+                            fontSize: "16px",
+                            paddingTop: "2px",
+                            paddingBottom: "2px",
+                          }}
                         >
                           <option value="10:00">10:00</option>
                           <option value="11:00">11:00</option>
@@ -324,7 +312,12 @@ const Home = () => {
                           name="dropoffDate"
                           value={searchData.dropoffDate}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-4 border border-gray-300 rounded-lg text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          style={{
+                            fontSize: "16px",
+                            paddingTop: "2px",
+                            paddingBottom: "2px",
+                          }}
                         >
                           <option value="22/07/2025">24/07/2025</option>
                           <option value="23/07/2025">23/07/2025</option>
@@ -337,7 +330,12 @@ const Home = () => {
                           name="dropoffTime"
                           value={searchData.dropoffTime}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-4 border border-gray-300 rounded-lg text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          style={{
+                            fontSize: "16px",
+                            paddingTop: "2px",
+                            paddingBottom: "2px",
+                          }}
                         >
                           <option value="10:00">10:00</option>
                           <option value="11:00">11:00</option>
@@ -351,7 +349,13 @@ const Home = () => {
                   {/* SEARCH BUTTON */}
                   <button
                     type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg font-medium text-lg transition duration-200"
+                    className="w-full text-white rounded-lg font-medium transition duration-200"
+                    style={{
+                      backgroundColor: "#003552",
+                      fontSize: "16px",
+                      paddingTop: "6px",
+                      paddingBottom: "6px",
+                    }}
                   >
                     Search for cars
                   </button>

@@ -274,6 +274,13 @@ const LoginModal = ({ isOpen, onClose }) => {
             ) : (
               // Email login form view
               <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Test Account Notice */}
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <p className="text-sm text-blue-800">
+                    <strong>Test Account:</strong> Use email: <code>test@example.com</code> and password: <code>password123</code>
+                  </p>
+                </div>
+
                 {/* Email */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">

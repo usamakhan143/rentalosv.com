@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Star,
   Users,
@@ -7,12 +8,27 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import { useLoginModal } from "../contexts/LoginModalContext";
 
 const BecomeHost = () => {
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
+  const { openLoginModal } = useLoginModal();
   const [openFAQ, setOpenFAQ] = useState(null);
 
   const toggleFAQ = (index) => {
     setOpenFAQ(openFAQ === index ? null : index);
+  };
+
+  const handleGetStarted = () => {
+    if (currentUser) {
+      // User is logged in, navigate to list your car
+      navigate('/list-your-car');
+    } else {
+      // User is not logged in, show login modal
+      openLoginModal();
+    }
   };
 
   const earningsData = [
@@ -76,6 +92,7 @@ const BecomeHost = () => {
               <button
                 className="px-8 py-4 rounded-lg text-white font-semibold text-lg transition-all hover:shadow-lg"
                 style={{ backgroundColor: "#FF7500" }}
+                onClick={handleGetStarted}
                 onMouseEnter={(e) =>
                   (e.target.style.backgroundColor = "#e66a00")
                 }
@@ -308,6 +325,7 @@ const BecomeHost = () => {
               <button
                 className="px-8 py-4 rounded-lg text-white font-semibold text-lg transition-all hover:shadow-lg"
                 style={{ backgroundColor: "#FF7500" }}
+                onClick={() => navigate('/calculator')}
                 onMouseEnter={(e) =>
                   (e.target.style.backgroundColor = "#e66a00")
                 }
@@ -562,6 +580,7 @@ const BecomeHost = () => {
               <button
                 className="mt-8 px-8 py-4 rounded-lg text-white font-semibold text-lg transition-all hover:shadow-lg"
                 style={{ backgroundColor: "#FF7500" }}
+                onClick={handleGetStarted}
                 onMouseEnter={(e) =>
                   (e.target.style.backgroundColor = "#e66a00")
                 }
@@ -733,6 +752,7 @@ const BecomeHost = () => {
             <button
               className="px-8 py-4 rounded-lg text-white font-semibold text-lg transition-all hover:shadow-lg"
               style={{ backgroundColor: "#FF7500" }}
+              onClick={handleGetStarted}
               onMouseEnter={(e) => (e.target.style.backgroundColor = "#e66a00")}
               onMouseLeave={(e) => (e.target.style.backgroundColor = "#FF7500")}
             >
@@ -805,6 +825,7 @@ const BecomeHost = () => {
           <button
             className="px-12 py-4 rounded-lg text-white font-semibold text-lg transition-all hover:shadow-lg"
             style={{ backgroundColor: "#FF7500" }}
+            onClick={handleGetStarted}
             onMouseEnter={(e) => (e.target.style.backgroundColor = "#e66a00")}
             onMouseLeave={(e) => (e.target.style.backgroundColor = "#FF7500")}
           >

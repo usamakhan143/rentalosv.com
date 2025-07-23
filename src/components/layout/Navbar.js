@@ -10,6 +10,12 @@ import {
   LogOut,
   Shield,
   Clock,
+  Heart,
+  MapPin,
+  MessageCircle,
+  Key,
+  Headphones,
+  FileText,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useLoginModal } from "../../contexts/LoginModalContext";
@@ -29,25 +35,26 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await logout();
+      setIsProfileMenuOpen(false);
       navigate("/");
+      window.location.reload(); // Force reload to clear any cached state
     } catch (error) {
       console.error("Error signing out:", error);
     }
   };
 
   const profileMenuItems = [
+    { to: "/favorites", label: "Favorites", icon: Heart },
+    { to: "/my-trips", label: "Trips", icon: MapPin },
+    { to: "/inbox", label: "Inbox", icon: MessageCircle },
+    { divider: true },
     { to: "/profile", label: "Profile", icon: User },
-    { to: "/my-trips", label: "My trips", icon: Calendar },
-    ...(userProfile?.role === "host" || userProfile?.role === "admin"
-      ? [
-          { to: "/my-cars", label: "My cars", icon: Car },
-          { to: "/host-bookings", label: "Bookings", icon: Clock },
-        ]
-      : []),
-    ...(userProfile?.role === "admin"
-      ? [{ to: "/admin", label: "Admin Panel", icon: Shield }]
-      : []),
-    { to: "/settings", label: "Settings", icon: Settings },
+    { to: "/settings", label: "Account", icon: User },
+    { to: "/become-host", label: "Become a host", icon: Car },
+    { divider: true },
+    { to: "/how-it-works", label: "How Rentalosv works", icon: Key },
+    { to: "/contact-support", label: "Contact support", icon: Headphones },
+    { to: "/legal", label: "Legal", icon: FileText },
   ];
 
   return (
@@ -106,38 +113,33 @@ const Navbar = () => {
                       className="fixed inset-0 z-40"
                       onClick={() => setIsProfileMenuOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <p className="text-sm font-medium text-gray-900">
-                          {userProfile?.firstName} {userProfile?.lastName}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {currentUser.email}
-                        </p>
-                      </div>
+                    <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                      {profileMenuItems.map((item, index) => {
+                        if (item.divider) {
+                          return <hr key={index} className="my-2 border-gray-100" />;
+                        }
 
-                      {profileMenuItems.map((item) => {
                         const Icon = item.icon;
                         return (
                           <Link
                             key={item.to}
                             to={item.to}
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50"
                             onClick={() => setIsProfileMenuOpen(false)}
                           >
-                            <Icon className="w-4 h-4 mr-3" />
-                            {item.label}
+                            <Icon className="w-5 h-5 mr-3 text-gray-600" />
+                            <span className="font-normal">{item.label}</span>
                           </Link>
                         );
                       })}
 
-                      <hr className="my-2" />
+                      <hr className="my-2 border-gray-100" />
                       <button
                         onClick={handleLogout}
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50"
                       >
-                        <LogOut className="w-4 h-4 mr-3" />
-                        Sign out
+                        <LogOut className="w-5 h-5 mr-3 text-gray-600" />
+                        <span className="font-normal">Log out</span>
                       </button>
                     </div>
                   </>

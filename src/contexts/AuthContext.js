@@ -59,7 +59,38 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Sign in with email and password
-  const signin = (email, password) => {
+  const signin = async (email, password) => {
+    // Check for static test account
+    if (email === "test@example.com" && password === "password123") {
+      // Create a mock user for testing
+      const mockUser = {
+        uid: "test-user-id",
+        email: "test@example.com",
+        displayName: "Test User",
+        photoURL: null
+      };
+
+      // Create mock profile
+      const mockProfile = {
+        uid: "test-user-id",
+        email: "test@example.com",
+        firstName: "Test",
+        lastName: "User",
+        role: "renter",
+        createdAt: new Date(),
+        verified: true,
+        profileComplete: true,
+        phone: "+1234567890",
+        avatar: null,
+      };
+
+      // Set the mock user and profile
+      setCurrentUser(mockUser);
+      setUserProfile(mockProfile);
+
+      return { user: mockUser };
+    }
+
     return signInWithEmailAndPassword(auth, email, password);
   };
 
@@ -94,6 +125,12 @@ export const AuthProvider = ({ children }) => {
 
   // Sign out
   const logout = () => {
+    // Handle static test user logout
+    if (currentUser && currentUser.uid === "test-user-id") {
+      setCurrentUser(null);
+      setUserProfile(null);
+      return Promise.resolve();
+    }
     return signOut(auth);
   };
 

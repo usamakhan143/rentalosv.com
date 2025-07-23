@@ -16,10 +16,25 @@ import Search from "./pages/search/Search";
 import CarDetail from "./pages/cars/CarDetail";
 import Profile from "./pages/user/Profile";
 import MyTrips from "./pages/user/MyTrips";
+import Favorites from "./pages/user/Favorites";
+import Inbox from "./pages/user/Inbox";
+import ChangePassword from "./pages/user/ChangePassword";
+import ChangePhone from "./pages/user/ChangePhone";
 import TripDetail from "./pages/trip/TripDetail";
 import MyCars from "./pages/host/MyCars";
 import AddCar from "./pages/host/AddCar";
 import EditCar from "./pages/host/EditCar";
+import ListYourCar from "./pages/host/ListYourCar";
+import Calendar from "./pages/host/Calendar";
+import Booked from "./pages/host/Booked";
+import History from "./pages/host/History";
+import HostInbox from "./pages/host/Inbox";
+import VehicleListings from "./pages/host/VehicleListings";
+import VehicleSettings from "./pages/host/VehicleSettings";
+import Earnings from "./pages/business/Earnings";
+import Performance from "./pages/business/Performance";
+import Ratings from "./pages/business/Ratings";
+import Transactions from "./pages/business/Transactions";
 import HostBookings from "./pages/host/HostBookings";
 import AdminPanel from "./pages/admin/AdminPanel";
 import Settings from "./pages/user/Settings";
@@ -35,6 +50,7 @@ import Careers from "./pages/Careers";
 import Press from "./pages/Press";
 import CarMake from "./pages/CarMake";
 import AdminSetup from "./pages/AdminSetup";
+import ContactSupport from "./pages/ContactSupport";
 import NotFound from "./pages/NotFound";
 import Unauthorized from "./pages/Unauthorized";
 
@@ -71,6 +87,7 @@ function App() {
                     <Route path="/team" element={<Team />} />
                     <Route path="/careers" element={<Careers />} />
                     <Route path="/press" element={<Press />} />
+                    <Route path="/contact-support" element={<ContactSupport />} />
                     <Route path="/:make" element={<CarMake />} />
                     <Route path="/admin-setup" element={<AdminSetup />} />
 
@@ -107,6 +124,38 @@ function App() {
                         </ProtectedRoute>
                       }
                     />
+                    <Route
+                      path="/favorites"
+                      element={
+                        <ProtectedRoute>
+                          <Favorites />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/inbox"
+                      element={
+                        <ProtectedRoute>
+                          <Inbox />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/change-password"
+                      element={
+                        <ProtectedRoute>
+                          <ChangePassword />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/change-phone"
+                      element={
+                        <ProtectedRoute>
+                          <ChangePhone />
+                        </ProtectedRoute>
+                      }
+                    />
 
                     {/* Host Routes */}
                     <Route
@@ -138,6 +187,96 @@ function App() {
                       element={
                         <ProtectedRoute>
                           <HostBookings />
+                        </ProtectedRoute>
+                      }
+                    />
+
+                    {/* Host Dashboard Routes */}
+                    <Route
+                      path="/list-your-car"
+                      element={
+                        <ProtectedRoute>
+                          <ListYourCar />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/calendar"
+                      element={
+                        <ProtectedRoute>
+                          <Calendar />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/trips/booked"
+                      element={
+                        <ProtectedRoute>
+                          <Booked />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/trips/history"
+                      element={
+                        <ProtectedRoute>
+                          <History />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/host/inbox"
+                      element={
+                        <ProtectedRoute>
+                          <HostInbox />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/vehicles/listings"
+                      element={
+                        <ProtectedRoute>
+                          <VehicleListings />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/vehicles/settings"
+                      element={
+                        <ProtectedRoute>
+                          <VehicleSettings />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/business/earnings"
+                      element={
+                        <ProtectedRoute>
+                          <Earnings />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/business/performance"
+                      element={
+                        <ProtectedRoute>
+                          <Performance />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/business/ratings"
+                      element={
+                        <ProtectedRoute>
+                          <Ratings />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/business/transactions"
+                      element={
+                        <ProtectedRoute>
+                          <Transactions />
                         </ProtectedRoute>
                       }
                     />

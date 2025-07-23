@@ -169,10 +169,9 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Social Media and App Links */}
+        {/* Social Media */}
         <div className="border-t border-gray-200 pt-6 md:pt-12">
-          <div className="flex flex-col lg:flex-row justify-between items-center space-y-8 lg:space-y-0">
-            {/* Social Media */}
+          <div className="flex justify-center lg:justify-start">
             <div className="flex items-center space-x-8">
               <a
                 href="#"
@@ -208,32 +207,6 @@ const Footer = () => {
                 aria-label="LinkedIn"
               >
                 <Linkedin className="w-6 h-6" />
-              </a>
-            </div>
-
-            {/* App Store Links */}
-            <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
-              <a
-                href="#"
-                className="block transition duration-200 hover:opacity-80"
-              >
-                <div className="bg-black text-white px-6 py-3 rounded-lg flex items-center space-x-2">
-                  <div className="text-xs">
-                    <div className="text-xs">Download on the</div>
-                    <div className="text-lg font-semibold">App Store</div>
-                  </div>
-                </div>
-              </a>
-              <a
-                href="#"
-                className="block transition duration-200 hover:opacity-80"
-              >
-                <div className="bg-black text-white px-6 py-3 rounded-lg flex items-center space-x-2">
-                  <div className="text-xs">
-                    <div className="text-xs">GET IT ON</div>
-                    <div className="text-lg font-semibold">Google Play</div>
-                  </div>
-                </div>
               </a>
             </div>
           </div>
